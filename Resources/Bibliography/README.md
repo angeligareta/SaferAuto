@@ -1,4 +1,5 @@
-# Bibliografía
+# Bibliography
+Here I show some of the latest documentation I have found related with Advanced Driver Assistance Systems (ADAS).
 
 ## Papers
 * [Modular safe driving assistant](https://patentscope.wipo.int/search/docs2/pct/WO2018124987/pdf/K4bXp_8mgXtOiimgIsN83Emx_3SlgM63trIXmYiXShc3sc5bSGQpykJpqYXYsALG2x00ch9LZypLgGfTzTIj4oGFb6RtcRM_q04_bdU_f7yXE0CK5Hmkou_2h0Hq9FwU?docId=id00000043118723&psAuth=MeGp5WgtSXuL59RSkE9FUUGQxkHVGlDiqGcXTc0_28w)
@@ -9,9 +10,9 @@
 * [Evaluating State-of-the-art Object Detector on Challenging Traffic Light Data](http://openaccess.thecvf.com/content_cvpr_2017_workshops/w9/papers/Jensen_Evaluating_State-Of-The-Art_Object_CVPR_2017_paper.pdf)
 * [Yolov3](https://pjreddie.com/media/files/papers/YOLOv3.pdf)
 
-## Productos similares
+## Example of final products
 * [EyeSight](https://www.subaru.com/engineering/eyesight.html)
 * [MobileEye](https://www.mobileye.com/)
 
-## Tutoriales
+## Tutorials
 * [Yolo Algorithm](https://www.coursera.org/lecture/convolutional-neural-networks/yolo-algorithm-fF3O0)

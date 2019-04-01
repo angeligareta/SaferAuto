@@ -11,10 +11,16 @@ import os
 
 input_train_path = "../GTSRB/input-img-train/"  # Path to the ppm images of the GTSRB dataset used to train the network.
 input_test_path = "../GTSRB/input-img-test/"  # Path to the ppm images of the GTSRB dataset used to test the network.
-output_train_path = "../GTSRB/output-img-train/"  # Path of the resulting training images of this script and labels.
-output_test_path = "../GTSRB/output-img-test/"  # Path of the resulting testing images of this script and their labels.
-train_text_file_path = "../GTSRB/sl-train.txt"  # Path of the training txt used as input for darknet.
-test_text_file_path = "../GTSRB/sl-test.txt"  # Path of the testing txt used as input for darknet.
+
+GTSDB_ROOT_PATH = "/home/angeliton/Desktop/SaferAuto/res/datasets/GTSRB/"
+
+# Path of the resulting training images of this script and labels.
+OUTPUT_TRAIN_PATH = GTSDB_ROOT_PATH + "output-img-train/"
+# Path of the resulting testing images of this script and their labels.
+OUTPUT_TEST_PATH = GTSDB_ROOT_PATH + "output-img-test/"
+
+TRAIN_TEXT_FILE_PATH = GTSDB_ROOT_PATH + "gtsrb-train.txt"  # Path of the training txt used as input for darknet.
+TEST_TEXT_FILE_PATH = GTSDB_ROOT_PATH + "gtsrb-test.txt"  # Path of the testing txt used as input for darknet.
 
 
 # Function for reading the images
@@ -78,7 +84,7 @@ def read_img(input_prefix, output_path, text_file, row, index):
     # show_img(img,  object_lb_x1, object_lb_y1, object_height, object_width)
 
     # WRITE THE FILE IN GENERAL FILE (TEST.TXT OR TRAIN.TXT)
-    text_file.write(os.getcwd() + output_prefix[1:] + ".jpg\n")
+    text_file.write(output_prefix + ".jpg\n")
 
     # SAVE IMG IN JPG FORMAT
     plt.imsave('{0}.jpg'.format(output_prefix), output_img)
@@ -103,5 +109,5 @@ def show_img(img,  object_lb_x1, object_lb_y1, object_height, object_width):
     plt.show()
 
 
-read_traffic_signs(input_train_path, output_train_path, train_text_file_path, True)
-read_traffic_signs(input_test_path, output_test_path, test_text_file_path, False)
+read_traffic_signs(input_train_path, OUTPUT_TRAIN_PATH, TRAIN_TEXT_FILE_PATH, True)
+read_traffic_signs(input_test_path, OUTPUT_TEST_PATH, TEST_TEXT_FILE_PATH, False)

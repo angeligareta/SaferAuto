@@ -10,6 +10,8 @@ import matplotlib.patches as patches
 import csv
 import os
 
+from PIL import Image
+
 ANNOTATIONS_FILE_PATH = "../GTSDB/gt.txt"
 INPUT_PATH = "../GTSDB/input-img/"  # Path to the ppm images of the GTSRB dataset.
 GTSDB_ROOT_PATH = "/home/angeliton/Desktop/SaferAuto/res/datasets/GTSDB/"
@@ -19,18 +21,22 @@ OUTPUT_TRAIN_PATH = GTSDB_ROOT_PATH + "output-img-train/"
 # Path of the resulting testing images of this script and their labels.
 OUTPUT_TEST_PATH = GTSDB_ROOT_PATH + "output-img-test/"
 
-TRAIN_TEXT_FILE_PATH = GTSDB_ROOT_PATH + "sl-train.txt"  # Path of the training txt used as input for darknet.
-TEST_TEXT_FILE_PATH = GTSDB_ROOT_PATH + "sl-test.txt"  # Path of the testing txt used as input for darknet.
+TRAIN_TEXT_FILE_PATH = GTSDB_ROOT_PATH + "gtsdb-train.txt"  # Path of the training txt used as input for darknet.
+TEST_TEXT_FILE_PATH = GTSDB_ROOT_PATH + "gtsdb-test.txt"  # Path of the testing txt used as input for darknet.
 
 TRAIN_PROB = 0.75
 TEST_PROB = 0.25
 
 
 def calculate_darknet_dimensions(object_class, img_width, img_height, left_x, top_y, right_x, bottom_y):
+    # print("1: ", img_width, img_height, left_x, top_y, right_x, bottom_y)
+
     object_width = right_x - left_x
-    object_height = top_y - bottom_y
+    object_height = bottom_y - top_y  # Reversed order of y!!!
     object_mid_x = (left_x + right_x) / 2
     object_mid_y = (bottom_y + top_y) / 2
+
+    # print("2: ", object_width, object_height, object_mid_x, object_mid_y)
 
     object_width_rel = object_width / img_width
     object_height_rel = object_height / img_height
@@ -74,7 +80,7 @@ def write_data(input_img, text_file, dark_net_label, output_file_path):
 def read_traffic_signs(input_path, annotations_file_path, output_train_path, output_test_path):
     train_text_file = open(TRAIN_TEXT_FILE_PATH, "w")
     test_text_file = open(TEST_TEXT_FILE_PATH, "w")
-    maximum_class = 8  # Originally 45
+    maximum_class = 9  # Originally 45
 
     gt_file = open(annotations_file_path)  # Annotations file
     gt_reader = csv.reader(gt_file, delimiter=';')  # CSV parser for annotations file
@@ -91,14 +97,22 @@ def read_traffic_signs(input_path, annotations_file_path, output_train_path, out
         top_y = int(row[2])
         right_x = int(row[3])
         bottom_y = int(row[4])
-        object_class = row[5]
+        object_class = int(row[5])
 
-        if (int(object_class) < maximum_class) & os.path.isfile(file_path):  # CHECK FILE EXISTS
+        if (object_class != 6) & (object_class < maximum_class) & os.path.isfile(file_path):
+            im = Image.open(file_path)
+            width, height = im.size
+
             input_img = plt.imread(file_path)
-            img_width, img_height = input_img.shape[0], input_img.shape[1]
+            img_width, img_height = im.size
             # show_img(input_img, left_x, bottom_y, (right_x - left_x), (top_y - bottom_y))
 
-            dark_net_label = calculate_darknet_dimensions(object_class, img_width, img_height, left_x, top_y, right_x, bottom_y)
+            if object_class < 6:
+                object_class_adjusted = str(object_class)
+            else:
+                object_class_adjusted = str(object_class - 1)
+
+            dark_net_label = calculate_darknet_dimensions(object_class_adjusted, img_width, img_height, left_x, top_y, right_x, bottom_y)
 
             # Only if file has not been processed increment classes count.
             # if filename not in processed_files:

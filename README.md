@@ -1,8 +1,8 @@
-# Safer Auto
-
 <p align="center">
-  <img height="350" width="350" src="https://saferautohome.files.wordpress.com/2019/03/logo-saferauto.jpg?w=1400&h=9999" alt="Safer Auto">
+  <img height="150" width="150" src="https://saferautohome.files.wordpress.com/2019/03/logo-saferauto.jpg?w=1400&h=9999" alt="Safer Auto">  
 </p>
+<h1 align="center">Safer Auto</h1>
+<h4 align="center">Modular system able to assist during driving </h4>
 
 ## Description
 SaferAuto is a modular driver assistance system. Between its features, it would detect road elements such as traffic lights, traffic signs and pedestrians. Besides, it would inform the driver of dangerous environments or situations, reducing the risk of having an accident. Finally, it would have an integrated chatbot with the ability to interact with the audio in the car, answer questions regarding the weather or informing of the best path to reach the destination.

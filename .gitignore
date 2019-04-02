@@ -389,3 +389,41 @@ dmypy.json
 
 # Datasets
 res/datasets/GTSRB
+res/datasets/GTSDB
+
+## Darknet
+darknet/*.o
+darknet/*.dSYM
+darknet/*.csv
+darknet/*.out
+darknet/*.png
+darknet/*.so
+darknet/*.exe
+darknet/mnist/
+darknet/caffe/
+darknet/grasp/
+darknet/images/
+darknet/scripts/
+darknet/cmake/
+darknet/3rdparty/
+darknet/opencv/
+darknet/convnet/
+darknet/weights/
+darknet/decaf/
+darknet/submission/
+# darknet/cfg/
+darknet/build/darknet/*
+darknet/build_*/
+darknet/!build/darknet/YoloWrapper.cs
+darknet/.fuse*
+
+# OS Generated #
+darknet/.DS_Store*
+darknet/ehthumbs.db
+darknet/Icon?
+darknet/Thumbs.db
+darknet/*.swp
+
+darknet/lib/
+darknet/include/
+darknet/share/

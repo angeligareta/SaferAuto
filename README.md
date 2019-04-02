@@ -2,7 +2,23 @@
   <img height="150" width="150" src="https://saferautohome.files.wordpress.com/2019/03/logo-saferauto.jpg?w=1400&h=9999" alt="Safer Auto">  
 </p>
 <h1 align="center">Safer Auto</h1>
-<h4 align="center">Modular system able to assist during driving. </h4>
+<h4 align="center">Real-time detection system to assist during driving. </h4>
+
+<p align="center">
+  <a href="https://github.com/angeligareta/SaferAuto/blob/master/LICENSE">
+    <img alt="GitHub" src="https://img.shields.io/github/license/angeligareta/SaferAuto.svg?style=for-the-badge">
+  </a>
+  <a href="https://saferauto.home.blog/">
+    <img alt="Website" src="https://img.shields.io/website/https/saferauto.home.blog.svg?style=for-the-badge">
+  </a>
+  <a href="https://twitter.com/SaferAuto">
+    <img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/SaferAuto.svg?style=for-the-badge">
+  </a>
+  <a href="https://github.com/ellerbrock/open-source-badges/">
+    <img alt="Website" src="https://badges.frapsoft.com/os/v1/open-source-175x29.png?v=103">
+  </a>
+</p>
+
 
 <p align="center">
   <a href="#key-features">Key Features</a> •
@@ -15,11 +31,12 @@ Detect, locate and track road elements from a video stream using **[YOLOv3](http
 
 ## Key Features
 * Detection of speed limit road signs and speed identification.
-* Detection of traffic lights and classification depending on its state (green, amber, red). *[on progress]*
-* Detection of cars and classification of the type. *[on progress]*
-* Detect the previous elements in real-time. *[on progress]*
-* Track the previous elements in real-time. *[on progress]* 
-* UI that displays the current detection and tracking of the road elements, showing bounding boxes with the different classes. *[on progress]*
+* Detection of traffic lights and classification depending on its state (green, amber, red). *[work in progress]*
+* Detection of cars and classification of the type. *[work in progress]*
+* Detect the previous elements in real-time. *[work in progress]*
+* Track the previous elements in real-time. *[work in progress]*
+* Implementation of a chatbot that notifies the driver of possible road threats and is able to repeat last notifications. *[work in progress]*
+* UI that displays the current detection and tracking of the road elements, showing bounding boxes with the different classes. *[work in progress]*
 
 ## How to use
 The current state of SaferAuto is **beta**, for the moment only the model for detecting speed limit road signs has been trained. However, the next feature to release will be a UI to try the detection with a real video stream.

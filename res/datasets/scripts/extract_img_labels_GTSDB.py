@@ -27,6 +27,9 @@ TEST_TEXT_FILE_PATH = GTSDB_ROOT_PATH + "gtsdb-test.txt"  # Path of the testing 
 TRAIN_PROB = 0.75
 TEST_PROB = 0.25
 
+banned_classes = [6]
+joined_classes = [0, 1, 2, 3, 4, 5, 7, 8]
+
 
 def calculate_darknet_dimensions(object_class, img_width, img_height, left_x, top_y, right_x, bottom_y):
     # print("1: ", img_width, img_height, left_x, top_y, right_x, bottom_y)
@@ -80,15 +83,17 @@ def write_data(input_img, text_file, dark_net_label, output_file_path):
 def read_traffic_signs(input_path, annotations_file_path, output_train_path, output_test_path):
     train_text_file = open(TRAIN_TEXT_FILE_PATH, "w")
     test_text_file = open(TEST_TEXT_FILE_PATH, "w")
-    maximum_class = 9  # Originally 45
+    # maximum_class = 9  # Originally 45
 
     gt_file = open(annotations_file_path)  # Annotations file
     gt_reader = csv.reader(gt_file, delimiter=';')  # CSV parser for annotations file
 
     # processed_files = []
-    classes_count = {}
-    for class_count in range(0, maximum_class):
-        classes_count[str(class_count)] = 0  # ADD ONE TO CLASSES
+    # classes_count = {}
+    # for class_count in range(0, maximum_class):
+    #    classes_count[str(class_count)] = 0  # ADD ONE TO CLASSES
+
+    top_class = 0
 
     for row in gt_reader:
         filename = row[0]
@@ -99,7 +104,7 @@ def read_traffic_signs(input_path, annotations_file_path, output_train_path, out
         bottom_y = int(row[4])
         object_class = int(row[5])
 
-        if (object_class != 6) & (object_class < maximum_class) & os.path.isfile(file_path):
+        if (object_class not in banned_classes) & os.path.isfile(file_path):
             im = Image.open(file_path)
             width, height = im.size
 
@@ -107,10 +112,14 @@ def read_traffic_signs(input_path, annotations_file_path, output_train_path, out
             img_width, img_height = im.size
             # show_img(input_img, left_x, bottom_y, (right_x - left_x), (top_y - bottom_y))
 
-            if object_class < 6:
-                object_class_adjusted = str(object_class)
+            # Join classes and adjust the rest
+            if object_class in joined_classes:
+                object_class_adjusted = joined_classes[0]
             else:
-                object_class_adjusted = str(object_class - 1)
+                object_class_adjusted = object_class - joined_classes[-1]
+
+            if object_class_adjusted > top_class:
+                top_class = object_class_adjusted
 
             dark_net_label = calculate_darknet_dimensions(object_class_adjusted, img_width, img_height, left_x, top_y, right_x, bottom_y)
 
@@ -130,6 +139,7 @@ def read_traffic_signs(input_path, annotations_file_path, output_train_path, out
             else:
                 write_data(input_img, test_text_file, dark_net_label, output_test_path + output_filename)
 
+    print('TOP CLASS: ' + str(top_class))
     gt_file.close()
 
 

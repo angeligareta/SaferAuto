@@ -427,3 +427,4 @@ darknet/*.swp
 darknet/lib/
 darknet/include/
 darknet/share/
+darknet/darknet

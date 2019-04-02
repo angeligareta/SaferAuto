@@ -393,21 +393,21 @@ res/datasets/GTSDB
 
 ## Darknet
 darknet/*.o
-darknet/*.dSYM
+darknet/*.dSYMhttps://github.com/AlexeyAB/darknet#requirements
 darknet/*.csv
 darknet/*.out
 darknet/*.png
 darknet/*.so
-darknet/*.exe
+darknet/*.exehttps://www.coursera.org/learn/visual-perception-self-driving-cars
 darknet/mnist/
 darknet/caffe/
 darknet/grasp/
 darknet/images/
 darknet/scripts/
 darknet/cmake/
-darknet/3rdparty/
-darknet/opencv/
-darknet/convnet/
+darknet/3rdparty/http://www.cvlibs.net/datasets/kitti/index.php
+darknet/opencv/http://www.cvlibs.net/datasets/kitti/index.php
+darknet/convnet/http://www.cvlibs.net/datasets/kitti/index.php
 darknet/weights/
 darknet/decaf/
 darknet/submission/
@@ -423,8 +423,10 @@ darknet/ehthumbs.db
 darknet/Icon?
 darknet/Thumbs.db
 darknet/*.swp
-
+https://medium.com/@jonathan_hui/real-time-object-detection-with-yolo-yolov2-28b1b93e2088
 darknet/lib/
 darknet/include/
 darknet/share/
 darknet/darknet
+darknet/3rdparty/
+darknet/bad.list

@@ -1,4 +1,4 @@
-classes = 8
+classes = 35
 train = /home/angeliton/Desktop/SaferAuto/res/datasets/GTSDB/gtsdb-train.txt
 valid = /home/angeliton/Desktop/SaferAuto/res/datasets/GTSDB/gtsdb-test.txt
 names = /home/angeliton/Desktop/SaferAuto/res/datasets/GTSDB/gtsdb.names

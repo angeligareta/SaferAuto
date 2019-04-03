@@ -27,8 +27,18 @@ TEST_TEXT_FILE_PATH = GTSDB_ROOT_PATH + "gtsdb-test.txt"  # Path of the testing 
 TRAIN_PROB = 0.75
 TEST_PROB = 0.25
 
-banned_classes = [6]
-joined_classes = [0, 1, 2, 3, 4, 5, 7, 8]
+
+traffic_sign_classes = {
+    "0-prohibitory": [0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 15, 16, 17],
+    "1-danger": [11, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31],
+    "2-mandatory": [33, 34, 35, 36, 37, 38, 39, 40],
+    "3-stop": [14],
+    "4-yield": [13],
+    "5-false_negatives": [6, 12, 32, 41, 42]
+}
+
+
+classes_counter = [0, 0, 0, 0, 0, 0]
 
 
 def calculate_darknet_dimensions(object_class, img_width, img_height, left_x, top_y, right_x, bottom_y):
@@ -67,7 +77,7 @@ def show_img(img,  object_lb_x1, object_lb_y1, object_width, object_height):
     plt.show()
 
 
-def write_data(input_img, text_file, dark_net_label, output_file_path):
+def write_data(object_class_adjusted, input_img, text_file, dark_net_label, output_file_path):
     # WRITE THE FILE IN GENERAL FILE (TEST.TXT OR TRAIN.TXT)
     # SAVE IMG IN JPG FORMAT IF HAS NOT ALREADY BEEN SAVED
     if not os.path.isfile(output_file_path):
@@ -76,24 +86,25 @@ def write_data(input_img, text_file, dark_net_label, output_file_path):
 
     # SAVE TXT FILE WITH THE IMG
     f = open(output_file_path + '.txt', "a")
-    f.write(dark_net_label + "\n")
+    if (object_class_adjusted != 5): # NotFalse negative
+        f.write(dark_net_label + "\n")
+
+
+def adjust_object_class(obj_class):
+    for classes in traffic_sign_classes.items():
+        if (obj_class in classes[1]):
+            object_class_adjusted = int(classes[0].split("-")[0])
+            classes_counter[object_class_adjusted] += 1
+            return object_class_adjusted
 
 
 # Function for reading the images
 def read_traffic_signs(input_path, annotations_file_path, output_train_path, output_test_path):
     train_text_file = open(TRAIN_TEXT_FILE_PATH, "w")
     test_text_file = open(TEST_TEXT_FILE_PATH, "w")
-    # maximum_class = 9  # Originally 45
 
     gt_file = open(annotations_file_path)  # Annotations file
     gt_reader = csv.reader(gt_file, delimiter=';')  # CSV parser for annotations file
-
-    # processed_files = []
-    # classes_count = {}
-    # for class_count in range(0, maximum_class):
-    #    classes_count[str(class_count)] = 0  # ADD ONE TO CLASSES
-
-    top_class = 0
 
     for row in gt_reader:
         filename = row[0]
@@ -104,7 +115,7 @@ def read_traffic_signs(input_path, annotations_file_path, output_train_path, out
         bottom_y = int(row[4])
         object_class = int(row[5])
 
-        if (object_class not in banned_classes) & os.path.isfile(file_path):
+        if os.path.isfile(file_path):
             im = Image.open(file_path)
             width, height = im.size
 
@@ -113,33 +124,20 @@ def read_traffic_signs(input_path, annotations_file_path, output_train_path, out
             # show_img(input_img, left_x, bottom_y, (right_x - left_x), (top_y - bottom_y))
 
             # Join classes and adjust the rest
-            if object_class in joined_classes:
-                object_class_adjusted = joined_classes[0]
-            else:
-                object_class_adjusted = object_class - joined_classes[-1]
-
-            if object_class_adjusted > top_class:
-                top_class = object_class_adjusted
+            object_class_adjusted = adjust_object_class(object_class)
 
             dark_net_label = calculate_darknet_dimensions(object_class_adjusted, img_width, img_height, left_x, top_y, right_x, bottom_y)
-
-            # Only if file has not been processed increment classes count.
-            # if filename not in processed_files:
-            #    processed_files.append(filename)
-            #    classes_count[object_class] = int(classes_count[object_class]) + 1
-
-            # incremented_object_class = int(object_class) + 1
-            # output_prefix = 'class' + str(incremented_object_class) + '-' + str(classes_count[object_class])
             output_filename = filename[:-4]
 
             # Get percentage for train and another for testing
             train_file = choices([True, False], [TRAIN_PROB, TEST_PROB])[0]
             if train_file:
-                write_data(input_img, train_text_file, dark_net_label, output_train_path + output_filename)
+                write_data(object_class_adjusted, input_img, train_text_file, dark_net_label, output_train_path + output_filename)
             else:
-                write_data(input_img, test_text_file, dark_net_label, output_test_path + output_filename)
+                write_data(object_class_adjusted, input_img, test_text_file, dark_net_label, output_test_path + output_filename)
 
-    print('TOP CLASS: ' + str(top_class))
+    for i in range(0, len(classes_counter)):
+        print('CLASS ' + str(i) + ' : ' + str(classes_counter[i]))
     gt_file.close()
 
 

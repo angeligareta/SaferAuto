@@ -7,17 +7,13 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import csv
 import os
-import cv2
 
-import glymur
-
+from random import choices
 from PIL import Image
-from pgmagick import Image as Magic
 
 BTSDB_ROOT_PATH = "/home/angeliton/Desktop/SaferAuto/res/datasets/BTSDB/"
 
-TRAIN_ANNOTATIONS_FILE_PATH = BTSDB_ROOT_PATH + "BTSD_training_GTclear.txt"
-TEST_ANNOTATIONS_FILE_PATH = BTSDB_ROOT_PATH + "BTSD_testing_GTclear.txt"
+COMBINED_ANNOTATIONS_FILE_PATH = BTSDB_ROOT_PATH + "annotations-combined.txt"
 
 # Path to the ppm images of the BTSDB dataset.
 INPUT_PATH = BTSDB_ROOT_PATH + "input-img/"
@@ -25,11 +21,14 @@ INPUT_PATH = BTSDB_ROOT_PATH + "input-img/"
 # Path of the resulting training and testing images of this script and labels.
 
 OUTPUT_TRAIN_PATH = BTSDB_ROOT_PATH + "output-img-train/"
-OUTPUT_TEST_PATH = BTSDB_ROOT_PATH + "output-img-test1/"
+OUTPUT_TEST_PATH = BTSDB_ROOT_PATH + "output-img-test/"
 
 # Path of the training and testing txt used as input for darknet.
 OUTPUT_TRAIN_TEXT_PATH = BTSDB_ROOT_PATH + "btsdb-test.txt"
 OUTPUT_TEST_TEXT_PATH = BTSDB_ROOT_PATH + "btsdb-train.txt"
+
+TRAIN_PROB = 0.8
+TEST_PROB = 0.2
 
 # Superclasses BTSDB
 traffic_sign_classes = {
@@ -87,11 +86,11 @@ def show_img(img, object_lb_x1, object_lb_y1, object_width, object_height):
 def write_data(object_class_adjusted, input_img, text_file, dark_net_label, output_file_path, output_filename):
     # WRITE THE FILE IN GENERAL FILE (TEST.TXT OR TRAIN.TXT)
     # SAVE IMG IN JPG FORMAT IF HAS NOT ALREADY BEEN SAVED
-    output_filename = output_filename[3:]
-    output_file_path += output_filename
+
+    # Remove subdir in the output filename
+    output_file_path += output_filename[3:]
     if not os.path.isfile(output_file_path):
         text_file.write(output_file_path + ".jpg\n")
-        # input_img.save(output_file_path + '.jpg')
         plt.imsave(output_file_path + '.jpg', input_img)
 
     # SAVE TXT FILE WITH THE IMG
@@ -109,15 +108,16 @@ def adjust_object_class(obj_class):
 
 
 # Function for reading the images
-def read_traffic_signs(input_path, annotations_file_path, output_text_path, output_path):
-    output_text_file = open(output_text_path, "w")
+def read_traffic_signs():
+    train_text_file = open(OUTPUT_TRAIN_TEXT_PATH, "w")
+    test_text_file = open(OUTPUT_TEST_TEXT_PATH, "w")
 
-    gt_file = open(annotations_file_path)  # Annotations file
+    gt_file = open(COMBINED_ANNOTATIONS_FILE_PATH)  # Annotations file
     gt_reader = csv.reader(gt_file, delimiter=';')  # CSV parser for annotations file
 
     for row in gt_reader:
         filename = row[0][:-4] + ".jpg"
-        file_path = input_path + filename
+        file_path = INPUT_PATH + filename
         left_x = float(row[1])
         bottom_y = float(row[2])
         right_x = float(row[3])
@@ -126,12 +126,9 @@ def read_traffic_signs(input_path, annotations_file_path, output_text_path, outp
         object_class = int(row[6])
 
         if os.path.isfile(file_path):
-            im = Image.open(file_path)
-
-            width, height = im.size
-
             input_img = plt.imread(file_path)
 
+            im = Image.open(file_path)
             img_width, img_height = im.size
             # show_img(input_img, left_x, bottom_y, (right_x - left_x), (top_y - bottom_y))
 
@@ -140,10 +137,17 @@ def read_traffic_signs(input_path, annotations_file_path, output_text_path, outp
 
             dark_net_label = calculate_darknet_dimensions(object_class_adjusted, img_width, img_height, left_x, top_y,
                                                           right_x, bottom_y)
+            # Remove jp2 extension
             output_filename = filename[:-4]
 
-            write_data(object_class_adjusted, input_img, output_text_file, dark_net_label,
-                       output_path, output_filename)
+            # Get percentage for train and another for testing
+            train_file = choices([True, False], [TRAIN_PROB, TEST_PROB])[0]
+            if train_file:
+                write_data(object_class_adjusted, input_img, train_text_file, dark_net_label,
+                           OUTPUT_TRAIN_PATH, output_filename)
+            else:
+                write_data(object_class_adjusted, input_img, test_text_file, dark_net_label,
+                           OUTPUT_TEST_PATH, output_filename)
 
     for i in range(0, len(classes_counter)):
         print('CLASS ' + str(i) + ' : ' + str(classes_counter[i]))
@@ -152,5 +156,4 @@ def read_traffic_signs(input_path, annotations_file_path, output_text_path, outp
     gt_file.close()
 
 
-read_traffic_signs(INPUT_PATH, TRAIN_ANNOTATIONS_FILE_PATH, OUTPUT_TRAIN_TEXT_PATH, OUTPUT_TRAIN_PATH)
-read_traffic_signs(INPUT_PATH, TEST_ANNOTATIONS_FILE_PATH, OUTPUT_TEST_TEXT_PATH, OUTPUT_TEST_PATH)
+read_traffic_signs()

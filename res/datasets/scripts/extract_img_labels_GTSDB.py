@@ -29,7 +29,6 @@ TEST_TEXT_FILE_PATH = GTSDB_ROOT_PATH + "gtsdb-test.txt"  # Path of the testing 
 TRAIN_PROB = 0.9
 TEST_PROB = 0.1
 
-
 traffic_sign_classes = {
     "0-prohibitory": [0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 15, 16, 17],
     "1-danger": [11, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31],
@@ -38,7 +37,6 @@ traffic_sign_classes = {
     "4-yield": [13],
     "5-false_negatives": [6, 12, 32, 41, 42]
 }
-
 
 classes_counter = [0, 0, 0, 0, 0, 0]
 
@@ -64,7 +62,7 @@ def calculate_darknet_dimensions(object_class, img_width, img_height, left_x, to
     return dark_net_label
 
 
-def show_img(img,  object_lb_x1, object_lb_y1, object_width, object_height):
+def show_img(img, object_lb_x1, object_lb_y1, object_width, object_height):
     fig, ax = plt.subplots(1)
     ax.imshow(img)
     rect = patches.Rectangle(
@@ -88,7 +86,7 @@ def write_data(object_class_adjusted, input_img, text_file, dark_net_label, outp
 
     # SAVE TXT FILE WITH THE IMG
     f = open(output_file_path + '.txt', "a")
-    if (object_class_adjusted != 5): # NotFalse negative
+    if (object_class_adjusted != 5):  # NotFalse negative
         f.write(dark_net_label + "\n")
 
 
@@ -101,7 +99,8 @@ def adjust_object_class(obj_class):
 
 
 def rgb2gray(rgb):
-    return np.dot(rgb[...,:3], [0.2989, 0.5870, 0.1140])
+    return np.dot(rgb[..., :3], [0.2989, 0.5870, 0.1140])
+
 
 # Function for reading the images
 def read_traffic_signs(input_path, annotations_file_path, output_train_path, output_test_path):
@@ -131,15 +130,18 @@ def read_traffic_signs(input_path, annotations_file_path, output_train_path, out
             # Join classes and adjust the rest
             object_class_adjusted = adjust_object_class(object_class)
 
-            dark_net_label = calculate_darknet_dimensions(object_class_adjusted, img_width, img_height, left_x, top_y, right_x, bottom_y)
+            dark_net_label = calculate_darknet_dimensions(object_class_adjusted, img_width, img_height, left_x, top_y,
+                                                          right_x, bottom_y)
             output_filename = filename[:-4]
 
             # Get percentage for train and another for testing
             train_file = choices([True, False], [TRAIN_PROB, TEST_PROB])[0]
             if train_file:
-                write_data(object_class_adjusted, input_img, train_text_file, dark_net_label, output_train_path + output_filename)
+                write_data(object_class_adjusted, input_img, train_text_file, dark_net_label,
+                           output_train_path + output_filename)
             else:
-                write_data(object_class_adjusted, input_img, test_text_file, dark_net_label, output_test_path + output_filename)
+                write_data(object_class_adjusted, input_img, test_text_file, dark_net_label,
+                           output_test_path + output_filename)
 
     for i in range(0, len(classes_counter)):
         print('CLASS ' + str(i) + ' : ' + str(classes_counter[i]))

@@ -5,11 +5,13 @@
 # By Ángel Igareta for SaferAuto [https://github.com/angeligareta/SaferAuto]
 from random import choices
 
+import cv2
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import csv
 import os
 
+import numpy as np
 from PIL import Image
 
 ANNOTATIONS_FILE_PATH = "../GTSDB/gt.txt"
@@ -19,13 +21,13 @@ GTSDB_ROOT_PATH = "/home/angeliton/Desktop/SaferAuto/res/datasets/GTSDB/"
 # Path of the resulting training images of this script and labels.
 OUTPUT_TRAIN_PATH = GTSDB_ROOT_PATH + "output-img-train/"
 # Path of the resulting testing images of this script and their labels.
-OUTPUT_TEST_PATH = GTSDB_ROOT_PATH + "output-img-test/"
+OUTPUT_TEST_PATH = GTSDB_ROOT_PATH + "output-img-test1/"
 
 TRAIN_TEXT_FILE_PATH = GTSDB_ROOT_PATH + "gtsdb-train.txt"  # Path of the training txt used as input for darknet.
 TEST_TEXT_FILE_PATH = GTSDB_ROOT_PATH + "gtsdb-test.txt"  # Path of the testing txt used as input for darknet.
 
-TRAIN_PROB = 0.75
-TEST_PROB = 0.25
+TRAIN_PROB = 0.9
+TEST_PROB = 0.1
 
 
 traffic_sign_classes = {
@@ -82,7 +84,7 @@ def write_data(object_class_adjusted, input_img, text_file, dark_net_label, outp
     # SAVE IMG IN JPG FORMAT IF HAS NOT ALREADY BEEN SAVED
     if not os.path.isfile(output_file_path):
         text_file.write(output_file_path + ".jpg\n")
-        plt.imsave(output_file_path + '.jpg', input_img)
+        cv2.imwrite(output_file_path + '.jpg', input_img)
 
     # SAVE TXT FILE WITH THE IMG
     f = open(output_file_path + '.txt', "a")
@@ -97,6 +99,9 @@ def adjust_object_class(obj_class):
             classes_counter[object_class_adjusted] += 1
             return object_class_adjusted
 
+
+def rgb2gray(rgb):
+    return np.dot(rgb[...,:3], [0.2989, 0.5870, 0.1140])
 
 # Function for reading the images
 def read_traffic_signs(input_path, annotations_file_path, output_train_path, output_test_path):
@@ -116,11 +121,11 @@ def read_traffic_signs(input_path, annotations_file_path, output_train_path, out
         object_class = int(row[5])
 
         if os.path.isfile(file_path):
-            im = Image.open(file_path)
-            width, height = im.size
+            img = Image.open(file_path)
+            img_width, img_height = img.size
 
-            input_img = plt.imread(file_path)
-            img_width, img_height = im.size
+            input_img = cv2.imread(file_path, 0)
+
             # show_img(input_img, left_x, bottom_y, (right_x - left_x), (top_y - bottom_y))
 
             # Join classes and adjust the rest

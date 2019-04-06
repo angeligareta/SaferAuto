@@ -17,7 +17,7 @@ GTSDB_ROOT_PATH = "/home/angeliton/Desktop/SaferAuto/res/datasets/GTSRB/"
 # Path of the resulting training images of this script and labels.
 OUTPUT_TRAIN_PATH = GTSDB_ROOT_PATH + "output-img-train/"
 # Path of the resulting testing images of this script and their labels.
-OUTPUT_TEST_PATH = GTSDB_ROOT_PATH + "output-img-test/"
+OUTPUT_TEST_PATH = GTSDB_ROOT_PATH + "output-img-test1/"
 
 TRAIN_TEXT_FILE_PATH = GTSDB_ROOT_PATH + "gtsrb-train.txt"  # Path of the training txt used as input for darknet.
 TEST_TEXT_FILE_PATH = GTSDB_ROOT_PATH + "gtsrb-test.txt"  # Path of the testing txt used as input for darknet.

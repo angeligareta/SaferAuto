@@ -1,0 +1,5 @@
+classes = 8
+train = /home/angeliton/Desktop/SaferAuto/res/datasets/BTSDB/btsdb-train.txt
+valid = /home/angeliton/Desktop/SaferAuto/res/datasets/BTSDB/btsdb-test.txt
+names = /home/angeliton/Desktop/SaferAuto/res/datasets/BTSDB/btsdb.names
+backup = weights/weights-btsdb

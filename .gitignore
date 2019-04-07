@@ -388,8 +388,7 @@ dmypy.json
 .pyre/
 
 # Datasets
-res/datasets/GTSRB
-res/datasets/GTSDB
+res/datasets/*B
 
 ## Darknet
 darknet/*.o

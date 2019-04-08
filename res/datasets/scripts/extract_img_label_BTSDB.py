@@ -30,8 +30,8 @@ OUTPUT_TEST_PATH = BTSDB_ROOT_PATH + "output-img-test/"
 OUTPUT_TRAIN_TEXT_PATH = BTSDB_ROOT_PATH + "btsdb-train.txt"
 OUTPUT_TEST_TEXT_PATH = BTSDB_ROOT_PATH + "btsdb-test.txt"
 
-TRAIN_PROB = 0.8
-TEST_PROB = 0.2
+TRAIN_PROB = 0.7
+TEST_PROB = 0.3
 
 # Superclasses BTSDB
 traffic_sign_classes = {
@@ -47,8 +47,8 @@ FALSE_NEGATIVE_CLASS = 5
 classes_counter_train = [0, 0, 0, 0, 0, 0]
 classes_counter_test = [0, 0, 0, 0, 0, 0]
 
-MAX_WIDTH = 500
-MAX_HEIGHT = 500
+MAX_WIDTH = 512
+MAX_HEIGHT = 512
 
 
 def calculate_darknet_dimensions(object_class, img_width, img_height, left_x, bottom_y, right_x, top_y):
@@ -157,8 +157,8 @@ def read_traffic_signs():
 
             # Join classes and adjust the rest
             object_class_adjusted = adjust_object_class(object_class)
-            dark_net_label = calculate_darknet_dimensions(object_class_adjusted, img_width, img_height, left_x, bottom_y,
-                                                          right_x, top_y)
+            dark_net_label = calculate_darknet_dimensions(object_class_adjusted, MAX_WIDTH, MAX_HEIGHT, left_x, bottom_y,
+                                                          right_x, top_y) # IMG SIZE IS THE NEW ONE!
             # Remove jp2 extension
             output_filename = filename[3:-4]
 

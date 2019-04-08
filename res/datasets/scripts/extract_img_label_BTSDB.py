@@ -23,15 +23,19 @@ BACKGROUND_IMG_PATH = BTSDB_ROOT_PATH + "input-img-bg/"
 
 # Path of the resulting training and testing images of this script and labels.
 
-OUTPUT_TRAIN_PATH = BTSDB_ROOT_PATH + "output-img-train/"
-OUTPUT_TEST_PATH = BTSDB_ROOT_PATH + "output-img-test/"
+OUTPUT_TRAIN_DIR_PATH = BTSDB_ROOT_PATH + "output-img-train/"
+OUTPUT_TEST_DIR_PATH = BTSDB_ROOT_PATH + "output-img-test/"
 
 # Path of the training and testing txt used as input for darknet.
 OUTPUT_TRAIN_TEXT_PATH = BTSDB_ROOT_PATH + "btsdb-train.txt"
 OUTPUT_TEST_TEXT_PATH = BTSDB_ROOT_PATH + "btsdb-test.txt"
 
-TRAIN_PROB = 0.7
-TEST_PROB = 0.3
+FALSE_NEGATIVE_CLASS = 5
+MAX_WIDTH = 512
+MAX_HEIGHT = 512
+
+TRAIN_PROB = 0.7  # REAL 0.85 ADDING FALSE DATA
+TEST_PROB = 0.3  # REAL 0.15
 
 # Superclasses BTSDB
 traffic_sign_classes = {
@@ -43,33 +47,8 @@ traffic_sign_classes = {
     "5-false_negatives": [-1, 0, 4, 5, 9, 10, 11]  # undefined, other, redbluecircles, diamonds
 }
 
-FALSE_NEGATIVE_CLASS = 5
 classes_counter_train = [0, 0, 0, 0, 0, 0]
-classes_counter_test = [0, 0, 0, 0, 0, 0]
-
-MAX_WIDTH = 512
-MAX_HEIGHT = 512
-
-
-def calculate_darknet_dimensions(object_class, img_width, img_height, left_x, bottom_y, right_x, top_y):
-    # print("1: ", img_width, img_height, left_x, top_y, right_x, bottom_y)
-
-    object_width = right_x - left_x
-    object_height = top_y - bottom_y  # Reversed order of y!!!
-    object_mid_x = (left_x + right_x) / 2.0
-    object_mid_y = (bottom_y + top_y) / 2.0
-
-    # print("2: ", object_width, object_height, object_mid_x, object_mid_y)
-
-    object_width_rel = object_width / img_width
-    object_height_rel = object_height / img_height
-    object_mid_x_rel = object_mid_x / img_width
-    object_mid_y_rel = object_mid_y / img_height
-
-    dark_net_label = "{} {} {} {} {}". \
-        format(object_class, object_mid_x_rel, object_mid_y_rel, object_width_rel, object_height_rel)
-
-    return dark_net_label
+classes_counter_test = [0, 0, 0, 0, 0]
 
 
 def show_img(img, object_lb_x1, object_lb_y1, object_width, object_height):
@@ -87,22 +66,6 @@ def show_img(img, object_lb_x1, object_lb_y1, object_width, object_height):
     plt.show()
 
 
-def write_data(object_class_adjusted, input_img, text_file, dark_net_label, output_file_path, train_file):
-    # Do not generate empty txt in test file
-    if (not train_file) & (object_class_adjusted == FALSE_NEGATIVE_CLASS):
-        return
-
-    # If the file is not already there (another class), create it
-    if not os.path.isfile(output_file_path):
-        text_file.write(output_file_path + ".jpg\n")
-        plt.imsave(output_file_path + '.jpg', input_img)
-
-    # SAVE TXT FILE WITH THE IMG
-    f = open(output_file_path + '.txt', "a")
-    if object_class_adjusted != FALSE_NEGATIVE_CLASS:  # NotFalse negative
-        f.write(dark_net_label + "\n")
-
-
 def adjust_object_class(obj_class):
     for classes in traffic_sign_classes.items():
         if obj_class in classes[1]:
@@ -110,8 +73,64 @@ def adjust_object_class(obj_class):
             return object_class_adjusted
 
 
+def parse_darknet_format(object_class, img_width, img_height, left_x, bottom_y, right_x, top_y):
+    object_width = right_x - left_x
+    object_height = top_y - bottom_y
+    object_mid_x = (left_x + right_x) / 2.0
+    object_mid_y = (bottom_y + top_y) / 2.0
+
+    object_width_rel = object_width / img_width
+    object_height_rel = object_height / img_height
+    object_mid_x_rel = object_mid_x / img_width
+    object_mid_y_rel = object_mid_y / img_height
+
+    dark_net_label = "{} {} {} {} {}". \
+        format(object_class, object_mid_x_rel, object_mid_y_rel, object_width_rel, object_height_rel)
+
+    return dark_net_label
+
+
+def calculate_darknet_format(input_img, image_width, image_height, row):
+    real_img_width, real_img_height = input_img.size
+    width_proportion = (real_img_width / MAX_WIDTH)
+    height_proportion = (real_img_height / MAX_HEIGHT)
+
+    left_x = float(row[1]) / width_proportion
+    bottom_y = float(row[2]) / height_proportion
+    right_x = float(row[3]) / width_proportion
+    top_y = float(row[4]) / height_proportion
+
+    object_class = int(row[6])
+    object_class_adjusted = adjust_object_class(object_class)  # Adjust class category
+
+    # show_img(input_img, left_x, bottom_y, (right_x - left_x), (top_y - bottom_y))
+
+    return parse_darknet_format(object_class_adjusted, image_width, image_height, left_x, bottom_y, right_x, top_y)
+
+
+def write_data(filename, input_img, input_img_labels, text_file, output_dir, train_file):
+    output_filename = filename[3:-4]
+    output_file_path = output_dir + output_filename
+
+    # Save file in general training/testing file
+    text_file.write(output_file_path + ".jpg\n")
+    # Save file in correct folder
+    plt.imsave(output_file_path + '.jpg', input_img)
+
+    # SAVE TXT FILE WITH THE IMG
+    f = open(output_file_path + '.txt', "a")
+    for input_img_label in input_img_labels:
+        f.write(input_img_label + "\n")
+
+        object_class = int(input_img_label.split()[0])
+        if train_file:
+            classes_counter_train[object_class] += 1
+        else:
+            classes_counter_test[object_class] += 1
+
+
 # Function for reading the images
-def add_background_data(total_bg_files, train_text_file):
+def add_bg_data(total_bg_files, train_text_file):
     print("Adding " + str(total_bg_files) + " background images...")
     bg_files = os.listdir(BACKGROUND_IMG_PATH)
     # Return a k length list of unique elements chosen from the population sequence. (population, k)
@@ -122,65 +141,96 @@ def add_background_data(total_bg_files, train_text_file):
         input_img = np.asarray(input_img.resize((MAX_WIDTH, MAX_HEIGHT)))
 
         filename = "bg-" + bg_file[:-4]
-        write_data(FALSE_NEGATIVE_CLASS, input_img, train_text_file, "", OUTPUT_TRAIN_PATH + filename)
+        write_data(filename, input_img, [], train_text_file, OUTPUT_TRAIN_DIR_PATH, True)
 
+
+def add_false_negatives(total_false_negatives_count, total_false_negatives_dir, train_text_file):
+    print("Adding " + str(total_false_negatives_count) + " false images...")
+    false_negative_sublist = rand.sample(total_false_negatives_dir.keys(), total_false_negatives_count)
+
+    for fn_filename in false_negative_sublist:
+        fn_file_path = total_false_negatives_dir[fn_filename][0]
+        input_img = Image.open(fn_file_path)
+        input_img = np.asarray(input_img.resize((MAX_WIDTH, MAX_HEIGHT)))
+
+        write_data(fn_filename, input_img, [], train_text_file, OUTPUT_TRAIN_DIR_PATH, True)
+
+
+def add_false_data(total_false_data, total_false_negatives_dir, train_text_file):
+    add_bg_data(round(total_false_data / 2), train_text_file)
+    add_false_negatives(round(total_false_data / 2), total_false_negatives_dir, train_text_file)
 
 
 def read_traffic_signs():
+    img_labels = {}  # Set of images and its labels [filename]: [()]
+
     train_text_file = open(OUTPUT_TRAIN_TEXT_PATH, "w")
     test_text_file = open(OUTPUT_TEST_TEXT_PATH, "w")
 
     gt_file = open(COMBINED_ANNOTATIONS_FILE_PATH)  # Annotations file
     gt_reader = csv.reader(gt_file, delimiter=';')  # CSV parser for annotations file
-    # test = 50
 
+    # WRITE ALL THE DATA IN A DICTIONARY (TO GROUP LABELS ON SAME IMG)
     for row in gt_reader:
-        filename = row[0][:-4] + ".jpg"
+        filename = row[0][:-4] + ".jpg"  # Replace jp2 with jpg
         file_path = INPUT_PATH + filename
 
         if os.path.isfile(file_path):
             input_img = Image.open(file_path)
-            img_width, img_height = input_img.size
-            input_img = np.asarray(input_img.resize((MAX_WIDTH, MAX_HEIGHT)))
+            darknet_label = calculate_darknet_format(input_img, MAX_WIDTH, MAX_HEIGHT, row)
+            object_class_adjusted = int(darknet_label.split()[0])
 
-            width_proportion = (img_width / MAX_WIDTH)
-            height_proportion = (img_height / MAX_HEIGHT)
+            if filename not in img_labels.keys():  # If it is the first label for that img
+                img_labels[filename] = [file_path]
 
-            left_x = float(row[1]) / width_proportion
-            bottom_y = float(row[2]) / height_proportion
-            right_x = float(row[3]) / width_proportion
-            top_y = float(row[4]) / height_proportion
-            # object_real_class = int(row[5])
-            object_class = int(row[6])
+            if object_class_adjusted != FALSE_NEGATIVE_CLASS:  # Add only useful labels (not false negatives)
+                img_labels[filename].append(darknet_label)
 
-            # show_img(input_img, left_x, bottom_y, (right_x - left_x), (top_y - bottom_y))
+    # COUNT FALSE NEGATIVES (IMG WITHOUT LABELS)
+    total_false_negatives_dir = {}
+    total_annotated_images_dir = {}
+    for filename in img_labels.keys():
+        img_label_subset = img_labels[filename]
+        if len(img_label_subset) == 1:
+            total_false_negatives_dir[filename] = img_label_subset
+        else:
+            total_annotated_images_dir[filename] = img_label_subset
 
-            # Join classes and adjust the rest
-            object_class_adjusted = adjust_object_class(object_class)
-            dark_net_label = calculate_darknet_dimensions(object_class_adjusted, MAX_WIDTH, MAX_HEIGHT, left_x, bottom_y,
-                                                          right_x, top_y) # IMG SIZE IS THE NEW ONE!
-            # Remove jp2 extension
-            output_filename = filename[3:-4]
+    total_annotated_images = len(img_labels.keys()) - len(total_false_negatives_dir.keys())
+    total_false_data = round(total_annotated_images * TRAIN_PROB)  # False data: False negative + background
 
-            # Get percentage for train and another for testing
-            train_file = rand.choices([True, False], [TRAIN_PROB, TEST_PROB])[0]
-            if train_file:
-                write_data(object_class_adjusted, input_img, train_text_file, dark_net_label,
-                           OUTPUT_TRAIN_PATH + output_filename, train_file)
-                classes_counter_train[object_class_adjusted] += 1
-            else:
-                write_data(object_class_adjusted, input_img, test_text_file, dark_net_label,
-                           OUTPUT_TEST_PATH + output_filename, train_file)
-                classes_counter_test[object_class_adjusted] += 1
+    print("total_false_negatives: " + str(len(total_false_negatives_dir.keys())))
+    print("total_annotated_images: " + str(total_annotated_images) + " == "
+          + str(len(total_annotated_images_dir.keys())))
+    print("total_false_data: " + str(total_false_data))
 
-            # test -= 1
-            # if test == 0:
-            #    break
+    # ADD FALSE IMAGES TO TRAIN
+    add_false_data(total_false_data, total_false_negatives_dir, train_text_file)
 
-    background_images = sum(classes_counter_train[:-1]) - classes_counter_train[FALSE_NEGATIVE_CLASS]
+    # ADJUST PROBABILITIES TO MAINTAIN OLD PROPORTIONS (Counting false negatives from training)
+    # orig_test_img_size = TEST_PROB * len(img_labels.keys())
+    # new_test_prob = orig_test_img_size / total_annotated_images
+    # new_train_prob = 1.0 - new_test_prob
 
-    if background_images > 0:
-        add_background_data(background_images, train_text_file)
+    # SET ANNOTATED IMAGES IN TRAIN OR TEST DIRECTORIES
+    # max_imgs = 1000
+    for filename in total_annotated_images_dir.keys():
+        input_img_file_path = img_labels[filename][0]
+        input_img = Image.open(input_img_file_path)  # Read image from image_file_path
+        input_img = np.asarray(input_img.resize((MAX_WIDTH, MAX_HEIGHT)))  # Resize img
+        input_img_labels = img_labels[filename][1:]
+
+        # Get percentage for train and another for testing
+        train_file = rand.choices([True, False], [TRAIN_PROB, TEST_PROB])[0]
+
+        if train_file:
+            write_data(filename, input_img, input_img_labels, train_text_file, OUTPUT_TRAIN_DIR_PATH, train_file)
+        else:
+            write_data(filename, input_img, input_img_labels, test_text_file, OUTPUT_TEST_DIR_PATH, train_file)
+
+        # max_imgs -= 1
+        # if max_imgs == 0:
+        #    break
 
     print("[TRAIN FILES]")
     print_class_info(classes_counter_train)
@@ -189,7 +239,7 @@ def read_traffic_signs():
     print_class_info(classes_counter_test)
 
     print("\n[PROPORTION]")
-    for i in range(0, len(classes_counter_train)):
+    for i in range(0, len(classes_counter_test)):
         total_classes = classes_counter_train[i] + classes_counter_test[i]
         print('\t-CLASS: ' + str(i) + ' : ' + "{:.2f}%".format(classes_counter_test[i]/total_classes * 100.0))
 

@@ -21,7 +21,7 @@ GTSDB_ROOT_PATH = "/home/angeliton/Desktop/SaferAuto/res/datasets/GTSDB/"
 # Path of the resulting training images of this script and labels.
 OUTPUT_TRAIN_PATH = GTSDB_ROOT_PATH + "output-img-train/"
 # Path of the resulting testing images of this script and their labels.
-OUTPUT_TEST_PATH = GTSDB_ROOT_PATH + "output-img-test1/"
+OUTPUT_TEST_PATH = GTSDB_ROOT_PATH + "output-img-test/"
 
 TRAIN_TEXT_FILE_PATH = GTSDB_ROOT_PATH + "gtsdb-train.txt"  # Path of the training txt used as input for darknet.
 TEST_TEXT_FILE_PATH = GTSDB_ROOT_PATH + "gtsdb-test.txt"  # Path of the testing txt used as input for darknet.
@@ -38,7 +38,8 @@ traffic_sign_classes = {
     "5-false_negatives": [6, 12, 32, 41, 42]
 }
 
-classes_counter = [0, 0, 0, 0, 0, 0]
+classes_counter_train = [0, 0, 0, 0, 0, 0]
+classes_counter_test = [0, 0, 0, 0, 0, 0]
 
 
 def calculate_darknet_dimensions(object_class, img_width, img_height, left_x, top_y, right_x, bottom_y):
@@ -94,7 +95,6 @@ def adjust_object_class(obj_class):
     for classes in traffic_sign_classes.items():
         if (obj_class in classes[1]):
             object_class_adjusted = int(classes[0].split("-")[0])
-            classes_counter[object_class_adjusted] += 1
             return object_class_adjusted
 
 
@@ -139,13 +139,30 @@ def read_traffic_signs(input_path, annotations_file_path, output_train_path, out
             if train_file:
                 write_data(object_class_adjusted, input_img, train_text_file, dark_net_label,
                            output_train_path + output_filename)
+                classes_counter_train[object_class_adjusted] += 1
             else:
                 write_data(object_class_adjusted, input_img, test_text_file, dark_net_label,
                            output_test_path + output_filename)
+                classes_counter_test[object_class_adjusted] += 1
 
-    for i in range(0, len(classes_counter)):
-        print('CLASS ' + str(i) + ' : ' + str(classes_counter[i]))
+    print("[TRAIN FILES]")
+    print_class_info(classes_counter_train)
+
+    print("\n[TEST FILES]")
+    print_class_info(classes_counter_test)
+
+    print("\n[PROPORTION]")
+    for i in range(0, len(classes_counter_train)):
+        total_classes = classes_counter_train[i] + classes_counter_test[i]
+        print('\t-CLASS: ' + str(i) + ' : ' + "{:.2f}%".format(classes_counter_test[i] / total_classes * 100.0))
+
     gt_file.close()
+
+
+def print_class_info(classes_counter):
+    for i in range(0, len(classes_counter)):
+        print('\t-CLASS: ' + str(i) + ' : ' + str(classes_counter[i]))
+    print('TOTAL: ' + str(sum(classes_counter)))
 
 
 read_traffic_signs(INPUT_PATH, ANNOTATIONS_FILE_PATH, OUTPUT_TRAIN_PATH, OUTPUT_TEST_PATH)

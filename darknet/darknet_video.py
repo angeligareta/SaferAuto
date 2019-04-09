@@ -43,9 +43,9 @@ def YOLO():
 
     global metaMain, netMain, altNames
     configPath = "./cfg/btsdb/yolov3-spp.cfg"
-    weightPath = "./weights/weights-btsdb/yolov3-spp_5000.weights"
+    weightPath = "./yolov3-traffic_sign.weights"
     metaPath = "./cfg/btsdb/btsdb.data"
-    videoPath = "./data/test-video.mp4"
+    videoPath = "./test-video-light.mp4"
     if not os.path.exists(configPath):
         raise ValueError("Invalid config path `" +
                          os.path.abspath(configPath)+"`")

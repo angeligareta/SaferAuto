@@ -39,7 +39,16 @@ Detect, locate and track road elements from a video stream using **[YOLOv3](http
 * UI that displays the current detection and tracking of the road elements, showing bounding boxes with the different classes. *[work in progress]*
 
 ## How to use
-The current state of SaferAuto is **beta**, for the moment only the model for detecting speed limit road signs has been trained. However, the next feature to release will be a UI to try the detection with a real video stream.
+For the moment, there is only a command-line program to test the traffic sign detector. It receives a video stream and plays the video while it indicates the bounding boxes of the different classes that the YOLO model detects. For running the script you need to have [python3 installed](https://www.python.org/downloads/). After that you only have to follow these steps:
+```
+git clone https://github.com/angeligareta/SaferAuto.git
+cd SaferAuto/darknet/
+python3 darknet_video.py
+```
+The output would be similar to this one:
+![First detection Safer Auto](first-detection-saferauto.gif)
+
+*Coming soon*: The next feature to release will be to add a UI to show the detection a more user-friendly.
 
 ## Author
 [**Ángel Igareta**](https://github.com/angeligareta) - Computer Engineering Student

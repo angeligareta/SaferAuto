@@ -42,9 +42,10 @@ altNames = None
 def YOLO():
 
     global metaMain, netMain, altNames
-    configPath = "./cfg/yolov3.cfg"
-    weightPath = "./yolov3.weights"
-    metaPath = "./cfg/coco.data"
+    configPath = "./cfg/btsdb/yolov3-spp.cfg"
+    weightPath = "./weights/weights-btsdb/yolov3-spp_5000.weights"
+    metaPath = "./cfg/btsdb/btsdb.data"
+    videoPath = "./data/test-video.mp4"
     if not os.path.exists(configPath):
         raise ValueError("Invalid config path `" +
                          os.path.abspath(configPath)+"`")
@@ -79,8 +80,9 @@ def YOLO():
                     pass
         except Exception:
             pass
+
     #cap = cv2.VideoCapture(0)
-    cap = cv2.VideoCapture("test.mp4")
+    cap = cv2.VideoCapture(videoPath)
     cap.set(3, 1280)
     cap.set(4, 720)
     out = cv2.VideoWriter(
@@ -105,9 +107,11 @@ def YOLO():
         detections = darknet.detect_image(netMain, metaMain, darknet_image, thresh=0.25)
         image = cvDrawBoxes(detections, frame_resized)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        print(1/(time.time()-prev_time))
+        elapsed_time = time.time()-prev_time
+        print('Current latency: ', (1 / elapsed_time), ' fps')
+        print('Detections: ', detections)
         cv2.imshow('Demo', image)
-        cv2.waitKey(3)
+        cv2.waitKey(1)
     cap.release()
     out.release()
 

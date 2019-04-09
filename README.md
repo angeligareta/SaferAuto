@@ -39,10 +39,13 @@ Detect, locate and track road elements from a video stream using **[YOLOv3](http
 * UI that displays the current detection and tracking of the road elements, showing bounding boxes with the different classes. *[work in progress]*
 
 ## How to use
-For the moment, there is only a command-line program to test the traffic sign detector. It receives a video stream and plays the video while it indicates the bounding boxes of the different classes that the YOLO model detects. For running the script you need to have [python3 installed](https://www.python.org/downloads/). After that you only have to follow these steps:
+For the moment, there is only a command-line program to test the traffic sign detector. It receives a video stream and plays the video while it indicates the bounding boxes of the different classes that the YOLO model detects. 
+
+For running this program script you need to have [python3 installed](https://www.python.org/downloads/). Besides, you need to download the [weights file](https://drive.google.com/uc?export=download&confirm=Yp2w&id=1Ddvmwn9WcB__jocW70piDeWzyvGbqUP5) that represents the trained model. Finally, you only have to follow these steps:
 ```
 git clone https://github.com/angeligareta/SaferAuto.git
 cd SaferAuto/darknet/
+mv <downloaded-weights> .
 python3 darknet_video.py
 ```
 The output would be similar to this one:

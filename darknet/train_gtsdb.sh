@@ -1,1 +1,1 @@
-./darknet detector train -map cfg/btsdb/btsdb.data cfg/btsdb/yolov3-spp.cfg weights/yolov3.conv.81
+./darknet detector train -map cfg/general/general.data cfg/general/yolov3-spp.cfg weights/yolov3.conv.81

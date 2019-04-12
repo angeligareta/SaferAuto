@@ -51,7 +51,7 @@ python3 darknet_video.py
 The output would be similar to this one:
 ![First detection Safer Auto](first-detection-saferauto.gif)
 
-*Coming soon*: The next feature to release will be to add a UI to show the detection a more user-friendly.
+*Coming soon*: The next feature to release will be to add a UI to show the detection more user-friendly, it is being developed using QT Creator.
 
 ## Author
 [**Ángel Igareta**](https://github.com/angeligareta) - Computer Engineering Student

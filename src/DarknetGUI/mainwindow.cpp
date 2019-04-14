@@ -6,9 +6,10 @@
 
 #include <iostream>
 
-MainWindow::MainWindow(QWidget *parent) :
+MainWindow::MainWindow(YOLO yolo, QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    yolo(yolo)
 {
     QRect screen_geometry = QApplication::desktop() -> availableGeometry();
     double screen_width = screen_geometry.width();
@@ -37,10 +38,20 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::display_image(cv::Mat mat_img, QApplication* app) {
+void MainWindow::start_detection() {
+    yolo.process_video(this);
+}
+
+void MainWindow::showEvent(QShowEvent* event) {
+    QMainWindow::showEvent(event);
+    // TODO Move to button result:
+    QTimer::singleShot(50, this, SLOT(start_detection()));
+}
+
+void MainWindow::display_image(cv::Mat mat_img) {
     QImage imdisplay((uchar*)mat_img.data, mat_img.cols, mat_img.rows, mat_img.step, QImage::Format_RGB888); //Converts the CV image into Qt standard format
     ui->detectiondisplay->setPixmap(QPixmap::fromImage(imdisplay));
     ui->detectiondisplay->update();
-    app->processEvents();
-    //ui->retranslateUi(this);
+    ui->detectiondisplay->repaint();
+    ui->retranslateUi(this);
 }

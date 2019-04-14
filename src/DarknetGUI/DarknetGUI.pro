@@ -20,11 +20,13 @@ CONFIG += c++11
 
 SOURCES += \
         main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    yolo.cpp
 
 HEADERS += \
         yolo_v2_class.hpp \
-    mainwindow.h
+    mainwindow.h \
+    yolo.h
 
 FORMS += \
     mainwindow.ui

@@ -8,23 +8,28 @@ namespace Ui {
     class MainWindow;
 }
 
+#include "yolo.h"
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = nullptr);
+    explicit MainWindow(YOLO yolo, QWidget *parent = nullptr);
     ~MainWindow();
     QImage imdisplay;
     QTimer* Timer;
-    void display_image(cv::Mat mat_img, QApplication* app);
 
-    signals:
+
+signals:
     public slots:
-        //void display_image(cv::Mat img) ;
+        void showEvent(QShowEvent *event);
+        void display_image(cv::Mat mat_img);
+        void start_detection();
 
 private:
         Ui::MainWindow *ui;
+        YOLO yolo;
 };
 
 #endif // MAINWINDOW_H

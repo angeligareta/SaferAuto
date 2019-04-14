@@ -30,13 +30,13 @@
 Detect, locate and track road elements from a video stream using **[YOLOv3](https://pjreddie.com/darknet/yolo/) real-time object detection system**. Among the elements to classify, the model will be trained to detect traffic lights, vehicles and some types of road signs.
 
 ## Key Features
-* Detection of speed limit road signs and speed identification.
+* Detection of speed limit road signs and speed identification. ✔️
 * Detection of traffic lights and classification depending on its state (green, amber, red). *[work in progress]*
 * Detection of cars and classification of the type. *[work in progress]*
-* Detect the previous elements in real-time. *[work in progress]*
+* Detect the previous elements in real-time. ✔️
 * Track the previous elements in real-time. *[work in progress]*
 * Implementation of a chatbot that notifies the driver of possible road threats and is able to repeat last notifications. *[work in progress]*
-* UI that displays the current detection and tracking of the road elements, showing bounding boxes with the different classes. *[work in progress]*
+* UI that displays the current detection and tracking of the road elements, showing bounding boxes with the different classes. ✔️
 
 ## How to use
 For the moment, there is only a command-line program to test the traffic sign detector. It receives a video stream and plays the video while it indicates the bounding boxes of the different classes that the YOLO model detects. 
@@ -51,7 +51,7 @@ python3 darknet_video.py
 The output would be similar to this one:
 ![First detection Safer Auto](first-detection-saferauto.gif)
 
-*Coming soon*: The next feature to release will be to add a UI to show the detection a more user-friendly.
+*Coming soon*: The next feature to release will be to add a UI to show the detection more user-friendly, it is being developed using QT Creator.
 
 ## Author
 [**Ángel Igareta**](https://github.com/angeligareta) - Computer Engineering Student

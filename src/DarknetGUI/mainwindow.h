@@ -19,7 +19,8 @@ public:
     ~MainWindow();
     QImage imdisplay;
     QTimer* Timer;
-
+    void display_detection(std::string info_text);    
+    void display_fps(std::string fps_text);
 
 signals:
     public slots:

@@ -32,12 +32,15 @@ cv::Mat YOLO::draw_boxes(cv::Mat mat_img, std::vector<bbox_t> result_vec, std::v
     //cv::waitKey(wait_msec);
 }
 
-void YOLO::show_result(std::vector<bbox_t> const result_vec, std::vector<std::string> const obj_names) {
+void YOLO::show_result(std::vector<bbox_t> const result_vec, std::vector<std::string> const obj_names, MainWindow* window) {
     for (auto &i : result_vec) {
         if (obj_names.size() > i.obj_id) std::cout << obj_names[i.obj_id] << " - ";
-        std::cout << "obj_id = " << i.obj_id << ",  x = " << i.x << ", y = " << i.y
-            << ", w = " << i.w << ", h = " << i.h
-            << std::setprecision(3) << ", prob = " << i.prob << std::endl;
+        //std::string info_text = "obj_id = " + i.obj_id + ",  x = " + i.x + ", y = "
+        //        +  i.y + ", w = " + i.w + ", h = " + i.h + ", prob = " + i.prob;
+        //std::cout << info_text << std::endl;
+        std::string info_text = "Last TS detected: " + obj_names[i.obj_id] + ". Probability: " + std::to_string(i.prob) + "%";
+        window->display_detection(info_text);
+
     }
 }
 
@@ -80,20 +83,22 @@ void YOLO::process_video(MainWindow* window)
 
                 double elapsed_secs = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
                 int fps = std::round(1000.0/elapsed_secs);
-                std::cout << "CURRENT FPS: " << fps << " fps" << std::endl;
+                std::string fps_text = "CURRENT FPS: " + std::to_string(fps) + " fps";
+                //std::cout << "CURRENT FPS: " << fps << " fps" << std::endl;
 
                 cv::Mat imdisplay = draw_boxes(frame, result_vec, obj_names, time_bt_detections);
                 window -> display_image(imdisplay);
+                window -> display_fps(fps_text);
 
                 large_preview.set(frame, result_vec);
-                show_result(result_vec, obj_names);
+                show_result(result_vec, obj_names, window);
             }
         }
         else {	// image file
             cv::Mat mat_img = cv::imread(filename);
             std::vector<bbox_t> result_vec = detector.detect(mat_img);
             draw_boxes(mat_img, result_vec, obj_names);
-            show_result(result_vec, obj_names);
+            show_result(result_vec, obj_names, window);
         }
     }
     catch (std::exception &e) {

@@ -3,6 +3,7 @@
 #include <QDesktopWidget>
 #include <QStyle>
 #include <QTimer>
+#include <QString>
 
 #include <iostream>
 
@@ -28,9 +29,13 @@ MainWindow::MainWindow(YOLO yolo, QWidget *parent) :
 
     ui->setupUi(this);
 
-    Timer = new QTimer(this);
+    /*Timer = new QTimer(this);
     connect(Timer, SIGNAL(timeout()), this, SLOT(display_image()));
-    Timer->start();
+    Timer->start();*/
+
+    ui->detectiondisplay->setAlignment(Qt::AlignCenter);
+    ui->detectionoutput->setAlignment(Qt::AlignCenter);
+    ui->fpsoutput->setAlignment(Qt::AlignCenter);
 }
 
 MainWindow::~MainWindow()
@@ -49,9 +54,22 @@ void MainWindow::showEvent(QShowEvent* event) {
 }
 
 void MainWindow::display_image(cv::Mat mat_img) {
+    cv::cvtColor(mat_img, mat_img, CV_BGR2RGB);
     QImage imdisplay((uchar*)mat_img.data, mat_img.cols, mat_img.rows, mat_img.step, QImage::Format_RGB888); //Converts the CV image into Qt standard format
     ui->detectiondisplay->setPixmap(QPixmap::fromImage(imdisplay));
     ui->detectiondisplay->update();
     ui->detectiondisplay->repaint();
-    ui->retranslateUi(this);
+    //ui->retranslateUi(this);
+}
+
+void MainWindow::display_detection(std::string info_text) {
+    ui->detectionoutput->setText(QString(info_text.c_str()));
+    ui->detectionoutput->update();
+    ui->detectionoutput->repaint();
+}
+
+void MainWindow::display_fps(std::string fps_text) {
+    ui->fpsoutput->setText(QString(fps_text.c_str()));
+    ui->fpsoutput->update();
+    ui->fpsoutput->repaint();
 }

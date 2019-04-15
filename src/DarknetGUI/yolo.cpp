@@ -1,5 +1,45 @@
 #include "yolo.h"
 
+std::string YOLO::getNames_file() const
+{
+    return names_file;
+}
+
+void YOLO::setNames_file(const std::string &value)
+{
+    names_file = value;
+}
+
+std::string YOLO::getCfg_file() const
+{
+    return cfg_file;
+}
+
+void YOLO::setCfg_file(const std::string &value)
+{
+    cfg_file = value;
+}
+
+std::string YOLO::getWeights_file() const
+{
+    return weights_file;
+}
+
+void YOLO::setWeights_file(const std::string &value)
+{
+    weights_file = value;
+}
+
+std::string YOLO::getFilename() const
+{
+    return filename;
+}
+
+void YOLO::setFilename(const std::string &value)
+{
+    filename = value;
+}
+
 YOLO::YOLO()
 {
     this->names_file = "../../darknet/cfg/general/general.names";

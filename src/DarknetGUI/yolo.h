@@ -28,8 +28,8 @@ class YOLO
 {
 
 private:
-    std::string names_file;
     std::string cfg_file;
+    std::string names_file;    
     std::string weights_file;
     std::string filename;
 
@@ -39,7 +39,18 @@ public:
     cv::Mat draw_boxes(cv::Mat mat_img, std::vector<bbox_t> result_vec, std::vector<std::string> obj_names, unsigned int wait_msec = 0);
     void show_result(std::vector<bbox_t> const result_vec, std::vector<std::string> const obj_names, MainWindow *window);
     std::vector<std::string> objects_names_from_file(const std::string filename);
+
     void process_video(MainWindow *window);
+
+    std::string getCfg_file() const;
+    std::string getNames_file() const;
+    std::string getWeights_file() const;
+    std::string getFilename() const;
+
+    void setCfg_file(const std::string &value);
+    void setNames_file(const std::string &value);
+    void setWeights_file(const std::string &value);
+    void setFilename(const std::string &value);
 };
 
 #endif // YOLO_H

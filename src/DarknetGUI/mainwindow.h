@@ -15,11 +15,11 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(YOLO yolo, QWidget *parent = nullptr);
+    MainWindow(YOLO yolo, QWidget *parent = nullptr);
     ~MainWindow();
     QImage imdisplay;
     QTimer* Timer;
-    void display_detection(std::string info_text);    
+    void display_detection(std::string info_text);
     void display_fps(std::string fps_text);
 
 signals:

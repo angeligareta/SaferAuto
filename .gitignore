@@ -434,3 +434,7 @@ darknet/yolov3.conv.81
 # Qt
 build/
 *.pro.user
+
+# Custom
+*.txt
+*.list

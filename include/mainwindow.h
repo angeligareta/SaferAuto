@@ -1,7 +1,7 @@
 #ifndef STARTWINDOW_H
 #define STARTWINDOW_H
 
-#include <QMainWindow>
+#include <QDialog>
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QGuiApplication>
@@ -11,10 +11,10 @@
 #include "detectionwindow.h"
 
 namespace Ui {
-class MainWindow;
+    class MainWindow;
 }
 
-class MainWindow : public QMainWindow
+class MainWindow : public QDialog
 {
     Q_OBJECT
 

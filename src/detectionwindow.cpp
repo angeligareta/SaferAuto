@@ -9,8 +9,8 @@
 #include <iostream>
 
 DetectionWindow::DetectionWindow(YOLO yolo, QWidget *parent) :
-    ui(new Ui::DetectionWindow),
-    yolo(yolo)
+                                                               ui(new Ui::DetectionWindow),
+                                                               yolo_(yolo)
 {
     QRect screen_geometry = QApplication::desktop() -> availableGeometry();
     int screen_width = screen_geometry.width();
@@ -20,9 +20,6 @@ DetectionWindow::DetectionWindow(YOLO yolo, QWidget *parent) :
     int reducted_width = round(screen_width * reduction_proportion);
     int reducted_height = screen_height * reduction_proportion;
 
-    int x_pos = screen_width / 2;
-    int y_pos = screen_height / 2;
-
     this->resize(reducted_width, reducted_height);
     //this->move(x_pos, y_pos);
 
@@ -31,6 +28,7 @@ DetectionWindow::DetectionWindow(YOLO yolo, QWidget *parent) :
     ui->detectiondisplay->setAlignment(Qt::AlignCenter);
     ui->detectionoutput->setAlignment(Qt::AlignCenter);
     ui->fpsoutput->setAlignment(Qt::AlignCenter);
+    ui->detectedElements->setAlignment(Qt::AlignCenter);
 }
 
 DetectionWindow::~DetectionWindow()
@@ -38,31 +36,40 @@ DetectionWindow::~DetectionWindow()
     delete ui;
 }
 
-void DetectionWindow::start_detection() {
-    yolo.processInputFile(this);
+void DetectionWindow::startDetection() {
+    yolo_.processInputFile(this);
 }
 
 void DetectionWindow::showEvent(QShowEvent* event) {
     QWidget::showEvent(event);
-    QTimer::singleShot(50, this, SLOT(start_detection())); // Timer compulsory
+    QTimer::singleShot(50, this, SLOT(startDetection())); // Timer compulsory
 }
 
-void DetectionWindow::display_image(cv::Mat mat_img) {
+void DetectionWindow::displayDetectedElement(cv::Mat mat_img) {
     cv::cvtColor(mat_img, mat_img, CV_BGR2RGB);
-    QImage imdisplay((uchar*)mat_img.data, mat_img.cols, mat_img.rows, mat_img.step, QImage::Format_RGB888); //Converts the CV image into Qt standard format
-    ui->detectiondisplay->setPixmap(QPixmap::fromImage(imdisplay));
+    QImage img_display((uchar*) mat_img.data, mat_img.cols, mat_img.rows, mat_img.step, QImage::Format_RGB888);
+
+    ui->detectedElements->setPixmap(QPixmap::fromImage(img_display));
+    ui->detectedElements->update();
+    ui->detectedElements->repaint();
+}
+
+void DetectionWindow::displayImage(cv::Mat mat_img) {
+    cv::cvtColor(mat_img, mat_img, CV_BGR2RGB);
+    QImage img_display((uchar*)mat_img.data, mat_img.cols, mat_img.rows, mat_img.step, QImage::Format_RGB888); //Converts the CV image into Qt standard format
+
+    ui->detectiondisplay->setPixmap(QPixmap::fromImage(img_display));
     ui->detectiondisplay->update();
     ui->detectiondisplay->repaint();
-    //ui->retranslateUi(this);
 }
 
-void DetectionWindow::display_detection(std::string info_text) {
+void DetectionWindow::displayDetection(std::string info_text) {
     ui->detectionoutput->setText(QString(info_text.c_str()));
     ui->detectionoutput->update();
     ui->detectionoutput->repaint();
 }
 
-void DetectionWindow::display_fps(std::string fps_text) {
+void DetectionWindow::displayFPS(std::string fps_text) {
     ui->fpsoutput->setText(QString(fps_text.c_str()));
     ui->fpsoutput->update();
     ui->fpsoutput->repaint();

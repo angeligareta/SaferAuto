@@ -38,7 +38,7 @@ public:
     YOLO();
     YOLO(std::string cfgFile, std::string namesFile, std::string weightsFile, std::string filename);
 
-    cv::Mat drawBoxes(cv::Mat mat_img, std::vector<bbox_t> result_vec, std::vector<std::string> obj_names);
+    cv::Mat drawBoxes(cv::Mat mat_img, std::vector<bbox_t> result_vec, std::vector<std::string> obj_names, DetectionWindow* window);
     void showResult(std::vector<bbox_t> const result_vec, std::vector<std::string> const obj_names, DetectionWindow *window);
     std::vector<std::string> getObjectNamesFromFile(const std::string filename);
 

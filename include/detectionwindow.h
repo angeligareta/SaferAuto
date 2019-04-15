@@ -17,20 +17,19 @@ class DetectionWindow : public QDialog
 public:
     DetectionWindow(YOLO yolo, QWidget *parent = nullptr);
     ~DetectionWindow();
-    QImage imdisplay;
-    QTimer* Timer;
-    void display_detection(std::string info_text);
-    void display_fps(std::string fps_text);
+    void displayDetection(std::string info_text);
+    void displayFPS(std::string fps_text);
+    void displayDetectedElement(cv::Mat mat_img);
 
 signals:
 public slots:
     void showEvent(QShowEvent *event);
-    void display_image(cv::Mat mat_img);
-    void start_detection();
+    void displayImage(cv::Mat mat_img);
+    void startDetection();
 
 private:
     Ui::DetectionWindow *ui;
-    YOLO yolo;
+    YOLO yolo_;
 };
 
 #endif // MAINWINDOW_H

@@ -16,9 +16,18 @@ YOLO::YOLO(std::string cfg_file_, std::string names_file_, std::string weights_f
     this->input_file_ = filename;
 }
 
-cv::Mat YOLO::drawBoxes(cv::Mat mat_img, std::vector<bbox_t> result_vec, std::vector<std::string> obj_names) {
+cv::Mat YOLO::drawBoxes(cv::Mat mat_img, std::vector<bbox_t> result_vec, std::vector<std::string> obj_names, DetectionWindow* window) {
     for (auto &i : result_vec) {
+        int margin = 10;
+        cv::Rect detection_roi = cv::Rect(i.x, i.y, i.w, i.h);
+        cv::Mat detected_sign = mat_img(detection_roi);
+        cv::resize(detected_sign, detected_sign, cv::Size(120, 120)); // Zoom detected sign
+        putText(detected_sign, obj_names[i.obj_id], cv::Point(25, 110), cv::FONT_HERSHEY_DUPLEX, 1, BOX_COLOR);
+
+        window -> displayDetectedElement(detected_sign);
+
         cv::rectangle(mat_img, cv::Rect(i.x, i.y, i.w, i.h), BOX_COLOR, 3);
+
         if(i.obj_id < obj_names.size())
             putText(mat_img, obj_names[i.obj_id], cv::Point2f(i.x, i.y - 10), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, BOX_COLOR);
         if(i.track_id > 0)
@@ -34,7 +43,8 @@ void YOLO::showResult(std::vector<bbox_t> const result_vec, std::vector<std::str
             std::cout << obj_names[i.obj_id] << " - ";
         }
         std::string info_text = "Last TS detected: " + obj_names[i.obj_id] + ". Probability: " + std::to_string(i.prob) + "%";
-        window->display_detection(info_text);
+
+        window->displayDetection(info_text);
 
     }
 }
@@ -73,15 +83,14 @@ void YOLO::processVideoFile(Detector detector, std::vector<std::string> obj_name
         double elapsed_secs = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
         int fps = static_cast<int>(1000.0 / elapsed_secs);
         std::string fps_text = "CURRENT FPS: " + std::to_string(fps) + " fps";
-        window -> display_fps(fps_text);
+        window -> displayFPS(fps_text);
 
-        large_preview.set(frame, result_vec);
-        drawBoxes(frame, result_vec, obj_names);
-        large_preview.draw(frame, true);
+        //large_preview.set(frame, result_vec);
+        drawBoxes(frame, result_vec, obj_names, window);
+        //large_preview.draw(frame, true);
 
-
-        window -> display_image(frame);
-        window -> display_fps(fps_text);
+        window -> displayImage(frame);
+        window -> displayFPS(fps_text);
         showResult(result_vec, obj_names, window);
     }
 }
@@ -90,9 +99,9 @@ void YOLO::processImageFile(Detector detector, std::vector<std::string> obj_name
     cv::Mat mat_img = cv::imread(input_file_);
     std::vector<bbox_t> result_vec = detector.detect(mat_img);
 
-    drawBoxes(mat_img, result_vec, obj_names);
+    drawBoxes(mat_img, result_vec, obj_names, window);
     showResult(result_vec, obj_names, window);
-    window -> display_image(mat_img);
+    window -> displayImage(mat_img);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(10000));
 }

@@ -57,12 +57,14 @@ The output would be similar to this one:
   <img src="https://github.com/angeligareta/SaferAuto/blob/master/res/media/first-detection-saferauto.gif" />
 </p>
 
-### GUI for Safer Auto[beta]
+### GUI for Safer Auto [beta]
 The second way of testing the detector is a Graphical UI that shows the detection in a more user-friendly way. It is being developed using [QT Creator](https://www.qt.io/download), feel free to see the code in [src/](src/) [headers/](headers/) and [ui/](ui/) or open the project [SaferAutoGUI.pro](SaferAutoGUI.pro) with a QT IDE.
 
-First of all, you need to download the [weights file](https://drive.google.com/uc?export=download&confirm=Yp2w&id=1Ddvmwn9WcB__jocW70piDeWzyvGbqUP5) that represents the trained model.
+First of all, you need to install CUDA and OPENCV. I have written a [tutorial](https://saferauto.home.blog/2019/04/06/4o-how-to-install-yolo-darknet-with-cuda-and-opencv-in-ubuntu/) about it. You would need to follow the steps **CUDA INSTALLATION**(Nvidia GPU required) and **Installing OPENCV**.
 
-After that, to try it out, you only need to follow these steps:
+After that, you need to download the [weights file](https://drive.google.com/uc?export=download&confirm=Yp2w&id=1Ddvmwn9WcB__jocW70piDeWzyvGbqUP5) that represents the trained model.
+
+Finally, to try it out, you only need to follow these steps:
 ```
 git clone https://github.com/angeligareta/SaferAuto.git
 cd SaferAuto/

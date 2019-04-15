@@ -58,10 +58,22 @@ The output would be similar to this one:
 </p>
 
 ### GUI for Safer Auto[beta]
-The second way of testing the detector is a Graphical UI to show the detection more user-friendly. It is being developed using QT Creator. For the moment, there is not an out-of-the-box solution, but you can download [QT Creator](https://www.qt.io/download), open [SaferAutoGUI.pro](SaferAutoGUI.pro) and try it out!
+The second way of testing the detector is a Graphical UI that shows the detection in a more user-friendly way. It is being developed using [QT Creator](https://www.qt.io/download), feel free to see the code in [src/](src/) [headers/](headers/) and [ui/](ui/) or open the project [SaferAutoGUI.pro](SaferAutoGUI.pro) with a QT IDE.
 
-Here there is an example of the beta GUI for Safer Auto:
+First of all, you need to download the [weights file](https://drive.google.com/uc?export=download&confirm=Yp2w&id=1Ddvmwn9WcB__jocW70piDeWzyvGbqUP5) that represents the trained model.
 
+After that, to try it out, you only need to follow these steps:
+```
+git clone https://github.com/angeligareta/SaferAuto.git
+cd SaferAuto/
+mkdir -p darknet/weights/edb
+mv <downloaded-weights> darknet/weights/edb/yolov3-spp_4000.weights
+LD_LIBRARY_PATH=lib ./build/SaferAutoGUI
+```
+
+Once these commands have been executed, the main window will open. In this first window, there are 4 options you can change, the configuration, names, weights and input file paths for testing the SaferAuto detector. Once you have selected the correct configuration (there is one selected by default), you can press the start button to start detecting!
+
+You can see a demo here:
 <p align="center" >
   <img src="https://github.com/angeligareta/SaferAuto/blob/master/res/media/gui-saferauto.gif" />
 </p>

@@ -42,27 +42,28 @@ Detect, locate and track road elements from a video stream using **[YOLOv3](http
 There are two options of trying the traffic sign detector:
 
 ### Command-line program
-The first one is a command-line program that receives a video stream and plays the video while it indicates the bounding boxes of the different classes that the YOLO model detects. 
+The first one is a command-line program that receives a video stream and plays the video while it indicates the bounding boxes of the different classes that the YOLO model detects.
 
 For running this program script you need to have [python3 installed](https://www.python.org/downloads/). Besides, you need to download the [weights file](https://drive.google.com/uc?export=download&confirm=Yp2w&id=1Ddvmwn9WcB__jocW70piDeWzyvGbqUP5) that represents the trained model. Finally, you only have to follow these steps:
 ```
 git clone https://github.com/angeligareta/SaferAuto.git
 cd SaferAuto/darknet/
-mv <downloaded-weights> .
+mkdir -p weights/edb
+mv <downloaded-weights> weights/edb/yolov3-spp_4000.weights
 python3 darknet_video.py
 ```
 The output would be similar to this one:
 <p align="center" >
-  <img src="https://github.com/angeligareta/SaferAuto/blob/master/first-detection-saferauto.gif" />
+  <img src="https://github.com/angeligareta/SaferAuto/blob/master/res/media/first-detection-saferauto.gif" />
 </p>
 
 ### GUI for Safer Auto[beta]
-The second way of testing the detector is a Graphical UI to show the detection more user-friendly. It is being developed using QT Creator. For the moment, there is not an out-of-the-box solution, but you can download the files from [src/DarknetGUI](src/DarknetGUI) folder and [QT Creator](https://www.qt.io/download) and try it out! 
+The second way of testing the detector is a Graphical UI to show the detection more user-friendly. It is being developed using QT Creator. For the moment, there is not an out-of-the-box solution, but you can download [QT Creator](https://www.qt.io/download), open [SaferAutoGUI.pro](SaferAutoGUI.pro) and try it out!
 
 Here there is an example of the beta GUI for Safer Auto:
 
 <p align="center" >
-  <img src="https://github.com/angeligareta/SaferAuto/blob/master/gui-saferauto.gif" />
+  <img src="https://github.com/angeligareta/SaferAuto/blob/master/res/media/gui-saferauto.gif" />
 </p>
 
 ## Author

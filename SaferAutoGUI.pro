@@ -2,7 +2,7 @@ QT += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = DarknetGUI
+TARGET = SaferAutoGUI
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -19,29 +19,29 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
-        main.cpp \
-    yolo.cpp \
-    detectionwindow.cpp \
-    mainwindow.cpp
+        src/main.cpp \
+        src/yolo.cpp \
+        src/detectionwindow.cpp \
+        src/mainwindow.cpp
 
 HEADERS += \
-        yolo_v2_class.hpp \
-    yolo.h \
-    detectionwindow.h \
-    mainwindow.h
+        include/yolo_v2_class.hpp \
+        include/yolo.h \
+        include/detectionwindow.h \
+        include/mainwindow.h
 
 FORMS += \
-    detectionwindow.ui \
-    mainwindow.ui
+        ui/detectionwindow.ui \
+        ui/mainwindow.ui
 
 
-INCLUDEPATH += $$PWD/../../darknet
-INCLUDEPATH += $$PWD/../../darknet/src
+INCLUDEPATH += $$PWD/darknet
+INCLUDEPATH += $$PWD/darknet/src
 INCLUDEPATH += /usr/local/include
 
-DEPENDPATH += $$PWD/../../darknet
+DEPENDPATH += $$PWD/darknet
 
-LIBS += -L$$PWD -ldarknet
+LIBS += -L$$PWD/lib/ -ldarknet
 LIBS += `pkg-config --cflags --libs opencv` \
 
 # Default rules for deployment.

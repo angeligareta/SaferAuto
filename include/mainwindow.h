@@ -4,8 +4,8 @@
 #include <QMainWindow>
 #include <QFileDialog>
 
-#include <yolo.h>
-#include <detectionwindow.h>
+#include "yolo.h"
+#include "detectionwindow.h"
 
 namespace Ui {
 class MainWindow;

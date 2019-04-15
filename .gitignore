@@ -432,5 +432,5 @@ darknet/bad.list
 darknet/yolov3.conv.81
 
 # Qt
-src/build*
-src/DarknetGUI/*.pro.user
+build/
+*.pro.user

@@ -1,5 +1,6 @@
-#include "detectionwindow.h"
+#include "include/detectionwindow.h"
 #include "ui_detectionwindow.h"
+
 #include <QDesktopWidget>
 #include <QStyle>
 #include <QTimer>

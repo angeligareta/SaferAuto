@@ -2,6 +2,9 @@
 #define STARTWINDOW_H
 
 #include <QMainWindow>
+#include <QApplication>
+#include <QDesktopWidget>
+#include <QGuiApplication>
 #include <QFileDialog>
 
 #include "yolo.h"
@@ -20,12 +23,13 @@ public:
     ~MainWindow();
     std::string getFilePath(std::string current_file, std::string file_extension);
 
+    void centerAndResize();
 private slots:
     void on_pushButton_clicked();
     void on_cfgButton_clicked();
     void on_namesButton_clicked();
     void on_weightsButton_clicked();
-    void on_videoButton_clicked();
+    void on_mediaButton_clicked();
 
 private:
     Ui::MainWindow *ui;

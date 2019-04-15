@@ -75,11 +75,13 @@ void YOLO::processVideoFile(Detector detector, std::vector<std::string> obj_name
         std::string fps_text = "CURRENT FPS: " + std::to_string(fps) + " fps";
         window -> display_fps(fps_text);
 
-        cv::Mat imdisplay = drawBoxes(frame, result_vec, obj_names);
-        window -> display_image(imdisplay);
-        window -> display_fps(fps_text);
-
         large_preview.set(frame, result_vec);
+        drawBoxes(frame, result_vec, obj_names);
+        large_preview.draw(frame, true);
+
+
+        window -> display_image(frame);
+        window -> display_fps(fps_text);
         showResult(result_vec, obj_names, window);
     }
 }
@@ -87,13 +89,16 @@ void YOLO::processVideoFile(Detector detector, std::vector<std::string> obj_name
 void YOLO::processImageFile(Detector detector, std::vector<std::string> obj_names, DetectionWindow* window) {
     cv::Mat mat_img = cv::imread(input_file_);
     std::vector<bbox_t> result_vec = detector.detect(mat_img);
+
     drawBoxes(mat_img, result_vec, obj_names);
     showResult(result_vec, obj_names, window);
+    window -> display_image(mat_img);
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(10000));
 }
 
 void YOLO::processInputFile(DetectionWindow* window)
 {
-
     Detector detector(cfg_file_, weights_file_);
     auto obj_names = getObjectNamesFromFile(names_file_);
 

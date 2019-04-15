@@ -9,7 +9,6 @@
 #include <iostream>
 
 DetectionWindow::DetectionWindow(YOLO yolo, QWidget *parent) :
-    QMainWindow(parent),
     ui(new Ui::DetectionWindow),
     yolo(yolo)
 {
@@ -26,7 +25,6 @@ DetectionWindow::DetectionWindow(YOLO yolo, QWidget *parent) :
 
     this->resize(reducted_width, reducted_height);
     //this->move(x_pos, y_pos);
-    this->setWindowTitle(QApplication::translate("SaferAuto Detection", "SaferAuto Detection", nullptr));
 
     ui->setupUi(this);
 
@@ -45,9 +43,8 @@ void DetectionWindow::start_detection() {
 }
 
 void DetectionWindow::showEvent(QShowEvent* event) {
-    QMainWindow::showEvent(event);
-    // TODO Move to button result:
-    QTimer::singleShot(50, this, SLOT(start_detection()));
+    QWidget::showEvent(event);
+    QTimer::singleShot(50, this, SLOT(start_detection())); // Timer compulsory
 }
 
 void DetectionWindow::display_image(cv::Mat mat_img) {

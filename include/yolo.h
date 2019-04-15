@@ -10,7 +10,7 @@
 
 #define OPENCV
 //#define TRACK_OPTFLOW
-#define GPU
+//#define GPU
 
 #include "yolo_v2_class.hpp" // imported functions from DLL
 #include "opencv2/core/version.hpp"

@@ -1,16 +1,16 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
+#include <QDialog>
 #include <opencv2/opencv.hpp>
 
 namespace Ui {
-class DetectionWindow;
+    class DetectionWindow;
 }
 
 #include "yolo.h"
 
-class DetectionWindow : public QMainWindow
+class DetectionWindow : public QDialog
 {
     Q_OBJECT
 

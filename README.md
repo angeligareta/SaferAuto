@@ -75,7 +75,13 @@ LD_LIBRARY_PATH=lib ./SaferAutoGUI
 
 Once these commands have been executed, the main window will open. In this first window, there are 4 options you can change, the configuration, names, weights and input file paths for testing the SaferAuto detector. Once you have selected the correct configuration (there is one selected by default), you can press the start button to start detecting!
 
-You can see a demo here:
+You can see the interface windows here:
+<p align="center" >
+  <img src="https://github.com/angeligareta/SaferAuto/blob/master/res/media/main-window.png" />
+  <img src="https://github.com/angeligareta/SaferAuto/blob/master/res/media/detection-window.png" />
+</p>
+
+#### Demo
 <p align="center" >
   <img src="https://github.com/angeligareta/SaferAuto/blob/master/res/media/gui-saferauto.gif" />
 </p>

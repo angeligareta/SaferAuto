@@ -438,3 +438,4 @@ build/
 # Custom
 *.txt
 *.list
+.idea/

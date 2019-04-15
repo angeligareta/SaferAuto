@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="VcsDirectoryMappings">
-    <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/keras-yolo3" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/res/datasets/BTSDB/openjpeg" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/tensorflow-yolov3" vcs="Git" />
-  </component>
-</project>

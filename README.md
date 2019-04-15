@@ -59,7 +59,7 @@ The second way of testing the detector is a Graphical UI to show the detection m
 
 Here there is an example of the beta GUI for Safer Auto:
 
-![SaferAuto GUI demo](gui-saferauto.mp4)
+![SaferAuto GUI demo](gui-saferauto.gif)
 
 ## Author
 [**Ángel Igareta**](https://github.com/angeligareta) - Computer Engineering Student

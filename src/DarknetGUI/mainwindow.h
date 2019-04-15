@@ -1,36 +1,35 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef STARTWINDOW_H
+#define STARTWINDOW_H
 
 #include <QMainWindow>
-#include <opencv2/opencv.hpp>
+#include <QFileDialog>
+
+#include <yolo.h>
+#include <detectionwindow.h>
 
 namespace Ui {
-    class MainWindow;
+class MainWindow;
 }
-
-#include "yolo.h"
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    MainWindow(YOLO yolo, QWidget *parent = nullptr);
+    explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    QImage imdisplay;
-    QTimer* Timer;
-    void display_detection(std::string info_text);
-    void display_fps(std::string fps_text);
+    std::string getFilePath(std::string current_file, std::string file_extension);
 
-signals:
-    public slots:
-        void showEvent(QShowEvent *event);
-        void display_image(cv::Mat mat_img);
-        void start_detection();
+private slots:
+    void on_pushButton_clicked();
+    void on_cfgButton_clicked();
+    void on_namesButton_clicked();
+    void on_weightsButton_clicked();
+    void on_videoButton_clicked();
 
 private:
-        Ui::MainWindow *ui;
-        YOLO yolo;
+    Ui::MainWindow *ui;
+    YOLO yolo_;
 };
 
-#endif // MAINWINDOW_H
+#endif // STARTWINDOW_H

@@ -17,10 +17,10 @@
 #include "opencv2/videoio/videoio.hpp"
 #pragma comment(lib, "opencv_world320.lib")
 
-class MainWindow;
+class DetectionWindow;
 
 /*#ifndef MAINWINDOW_H
-#include "mainwindow.h"
+#include "detectionwindow.h"
 #include <opencv2/opencv.hpp> // C++s
 #endif*/
 
@@ -28,31 +28,69 @@ class YOLO
 {
 
 private:
-    std::string cfg_file;
-    std::string names_file;    
-    std::string weights_file;
-    std::string filename;
+    std::string cfg_file_;
+    std::string names_file_;
+    std::string weights_file_;
+    std::string input_file_;
+    const cv::Scalar BOX_COLOR = cv::Scalar(60, 160, 260);
 
 public:
     YOLO();
-    YOLO(std::string cfg_file, std::string names_file, std::string weights_file, std::string filename);
-    cv::Mat draw_boxes(cv::Mat mat_img, std::vector<bbox_t> result_vec, std::vector<std::string> obj_names, unsigned int wait_msec = 0);
-    void show_result(std::vector<bbox_t> const result_vec, std::vector<std::string> const obj_names, MainWindow *window);
-    std::vector<std::string> objects_names_from_file(const std::string filename);
+    YOLO(std::string cfgFile, std::string namesFile, std::string weightsFile, std::string filename);
 
-    void process_video(MainWindow *window);
+    cv::Mat drawBoxes(cv::Mat mat_img, std::vector<bbox_t> result_vec, std::vector<std::string> obj_names);
+    void showResult(std::vector<bbox_t> const result_vec, std::vector<std::string> const obj_names, DetectionWindow *window);
+    std::vector<std::string> getObjectNamesFromFile(const std::string filename);
 
-    std::string getCfg_file() const;
-    std::string getNames_file() const;
-    std::string getWeights_file() const;
-    std::string getFilename() const;
+    void processInputFile(DetectionWindow *window);
+    void processVideoFile(Detector detector, std::vector<std::string> obj_names, DetectionWindow *window);
+    void processImageFile(Detector detector, std::vector<std::string> obj_names, DetectionWindow *window);
 
-    void setCfg_file(const std::string &value);
-    void setNames_file(const std::string &value);
-    void setWeights_file(const std::string &value);
-    void setFilename(const std::string &value);
+    // GETTERS
+    /**
+     * @brief Getter of configuration file for Darknet.
+     * @return
+     */
+    std::string getCfgFile() const;
+    /**
+     * @brief Getter of names file for Darknet.
+     * @return
+     */
+    std::string getNamesFile() const;
+    /**
+     * @brief Getter of weights file for Darknet.
+     * @return
+     */
+    std::string getWeightsFile() const;
+    /**
+     * @brief Getter of input file for Darknet detection.
+     * @return
+     */
+    std::string getInputFile() const;
+
+    // SETTERS
+    /**
+     * @brief Setter of configuration file for Darknet.
+     * @param value
+     */
+    void setCfgFile(const std::string &value);
+    /**
+     * @brief Setter of names file for Darknet.
+     * @param value
+     */
+    void setNamesFile(const std::string &value);
+    /**
+     * @brief Setter of weights file for Darknet.
+     * @param value
+     */
+    void setWeightsFile(const std::string &value);
+    /**
+     * @brief Setter of input file for Darknet detection.
+     * @param value
+     */
+    void setInputFile(const std::string &value);
 };
 
 #endif // YOLO_H
-#include "mainwindow.h"
+#include "detectionwindow.h"
 

@@ -84,7 +84,7 @@ public:
     LIB_API int get_net_color_depth() const;
 
     LIB_API std::vector<bbox_t> tracking_id(std::vector<bbox_t> cur_bbox_vec, bool const change_history = true,
-                                                int const frames_story = 5, int const max_dist = 40);
+                                            int const frames_story = 5, int const max_dist = 40);
 
     LIB_API void *get_cuda_context();
 
@@ -183,7 +183,7 @@ private:
 public:
 
     bool send_json_http(std::vector<bbox_t> cur_bbox_vec, std::vector<std::string> obj_names, int frame_id,
-        std::string filename = std::string(), int timeout = 400000, int port = 8070)
+                        std::string filename = std::string(), int timeout = 400000, int port = 8070)
     {
         std::string send_str;
 
@@ -201,7 +201,7 @@ public:
             char *buf = (char *)calloc(2048, sizeof(char));
 
             sprintf(buf, "  {\"class_id\":%d, \"name\":\"%s\", \"absolute_coordinates\":{\"center_x\":%d, \"center_y\":%d, \"width\":%d, \"height\":%d}, \"confidence\":%f",
-                i.obj_id, obj_names[i.obj_id].c_str(), i.x, i.y, i.w, i.h, i.prob);
+                    i.obj_id, obj_names[i.obj_id].c_str(), i.x, i.y, i.w, i.h, i.prob);
 
             //sprintf(buf, "  {\"class_id\":%d, \"name\":\"%s\", \"relative_coordinates\":{\"center_x\":%f, \"center_y\":%f, \"width\":%f, \"height\":%f}, \"confidence\":%f",
             //    i.obj_id, obj_names[i.obj_id], i.x, i.y, i.w, i.h, i.prob);
@@ -210,7 +210,7 @@ public:
 
             if (!std::isnan(i.z_3d)) {
                 sprintf(buf, "\n    , \"coordinates_in_meters\":{\"x_3d\":%.2f, \"y_3d\":%.2f, \"z_3d\":%.2f}",
-                    i.x_3d, i.y_3d, i.z_3d);
+                        i.x_3d, i.y_3d, i.z_3d);
                 send_str += buf;
             }
 
@@ -244,8 +244,8 @@ public:
 
 
     Tracker_optflow(int _gpu_id = 0, int win_size = 15, int max_level = 3, int iterations = 8000, int _flow_error = -1) :
-        gpu_count(cv::cuda::getCudaEnabledDeviceCount()), gpu_id(std::min(_gpu_id, gpu_count-1)),
-        flow_error((_flow_error > 0)? _flow_error:(win_size*4))
+                                                                                                                          gpu_count(cv::cuda::getCudaEnabledDeviceCount()), gpu_id(std::min(_gpu_id, gpu_count-1)),
+                                                                                                                          flow_error((_flow_error > 0)? _flow_error:(win_size*4))
     {
         int const old_gpu_id = cv::cuda::getDevice();
         cv::cuda::setDevice(gpu_id);
@@ -430,7 +430,7 @@ public:
 
 
     Tracker_optflow(int win_size = 15, int max_level = 3, int iterations = 8000, int _flow_error = -1) :
-        flow_error((_flow_error > 0)? _flow_error:(win_size*4))
+                                                                                                         flow_error((_flow_error > 0)? _flow_error:(win_size*4))
     {
         sync_PyrLKOpticalFlow = cv::SparsePyrLKOpticalFlow::create();
         sync_PyrLKOpticalFlow->setWinSize(cv::Size(win_size, win_size));    // 9, 15, 21, 31
@@ -577,7 +577,7 @@ class preview_boxes_t {
     bool const one_off_detections;
 public:
     preview_boxes_t(size_t _preview_box_size = 100, size_t _bottom_offset = 100, bool _one_off_detections = false) :
-        preview_box_size(_preview_box_size), bottom_offset(_bottom_offset), one_off_detections(_one_off_detections)
+                                                                                                                     preview_box_size(_preview_box_size), bottom_offset(_bottom_offset), one_off_detections(_one_off_detections)
     {}
 
     void set(cv::Mat src_mat, std::vector<bbox_t> result_vec)
@@ -675,13 +675,13 @@ public:
 
                 if (!one_off_detections && prev_box.current_detection) {
                     cv::line(draw_mat, dst_rect_roi.tl() + cv::Point2i(preview_box_size, 0),
-                        cv::Point2i(prev_box.bbox.x, prev_box.bbox.y + prev_box.bbox.h),
-                        color);
+                             cv::Point2i(prev_box.bbox.x, prev_box.bbox.y + prev_box.bbox.h),
+                             color);
                 }
 
                 if (one_off_detections && show_small_boxes) {
                     cv::Rect src_rect_roi(cv::Point2i(prev_box.bbox.x, prev_box.bbox.y),
-                        cv::Size(prev_box.bbox.w, prev_box.bbox.h));
+                                          cv::Size(prev_box.bbox.w, prev_box.bbox.h));
                     unsigned int const color_history = (255 * prev_box.last_showed_frames_ago) / frames_history;
                     color = cv::Scalar(255 - 3 * color_history, 255 - 2 * color_history, 255 - 1 * color_history);
                     if (prev_box.mat_obj.size() == src_rect_roi.size()) {
@@ -837,7 +837,7 @@ public:
 
 
         one_kalman_t(int _stateSize = 6, int _measSize = 4, int _contrSize = 0) :
-            kf(_stateSize, _measSize, _contrSize, CV_32F), measSize(_measSize), stateSize(_stateSize), contrSize(_contrSize)
+                                                                                  kf(_stateSize, _measSize, _contrSize, CV_32F), measSize(_measSize), stateSize(_stateSize), contrSize(_contrSize)
         {
             state = cv::Mat(stateSize, 1, CV_32F);  // [x,y,v_x,v_y,w,h]
             meas = cv::Mat(measSize, 1, CV_32F);    // [z_x,z_y,z_w,z_h]
@@ -852,8 +852,8 @@ public:
 
 
     track_kalman_t(int _max_objects = 1000, int _min_frames = 3, float _max_dist = 40, cv::Size _img_size = cv::Size(10000, 10000)) :
-        max_objects(_max_objects), min_frames(_min_frames), max_dist(_max_dist), img_size(_img_size),
-        track_id_counter(0)
+                                                                                                                                      max_objects(_max_objects), min_frames(_min_frames), max_dist(_max_dist), img_size(_img_size),
+                                                                                                                                      track_id_counter(0)
     {
         kalman_vec.resize(max_objects);
         track_id_state_id_time.resize(max_objects);
@@ -1045,8 +1045,8 @@ public:
         return result_vec;
     }
 
-};
-// ----------------------------------------------
+    };
+    // ----------------------------------------------
 #endif    // OPENCV
 
 #endif    // __cplusplus

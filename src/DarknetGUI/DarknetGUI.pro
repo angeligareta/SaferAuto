@@ -21,18 +21,18 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
     yolo.cpp \
-    mainwindow.cpp \
-    startwindow.cpp
+    detectionwindow.cpp \
+    mainwindow.cpp
 
 HEADERS += \
         yolo_v2_class.hpp \
     yolo.h \
-    mainwindow.h \
-    startwindow.h
+    detectionwindow.h \
+    mainwindow.h
 
 FORMS += \
-    mainwindow.ui \
-    startwindow.ui
+    detectionwindow.ui \
+    mainwindow.ui
 
 
 INCLUDEPATH += $$PWD/../../darknet

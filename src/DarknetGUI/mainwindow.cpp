@@ -1,41 +1,19 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <QDesktopWidget>
-#include <QStyle>
-#include <QTimer>
-#include <QString>
 
-#include <iostream>
-
-MainWindow::MainWindow(YOLO yolo, QWidget *parent) :
+MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    yolo(yolo)
+    yolo_()
 {
-    QRect screen_geometry = QApplication::desktop() -> availableGeometry();
-    double screen_width = screen_geometry.width();
-    double screen_height = screen_geometry.height();
-
-    double reduction_proportion = 80.0 / 100.0;
-    int reducted_width = screen_width * reduction_proportion;
-    int reducted_height = screen_height * reduction_proportion;
-
-    int x_pos = screen_width / 2;
-    int y_pos = screen_height / 2;
-
-    this->resize(reducted_width, reducted_height);
-    //this->move(x_pos, y_pos);
-    this->setWindowTitle("SaferAuto");
+    this->setWindowTitle(QApplication::translate("SaferAuto Detection", "SaferAuto Detection", nullptr));
 
     ui->setupUi(this);
 
-    /*Timer = new QTimer(this);
-    connect(Timer, SIGNAL(timeout()), this, SLOT(display_image()));
-    Timer->start();*/
-
-    ui->detectiondisplay->setAlignment(Qt::AlignCenter);
-    ui->detectionoutput->setAlignment(Qt::AlignCenter);
-    ui->fpsoutput->setAlignment(Qt::AlignCenter);
+    ui->cfgTag->setText(QString::fromStdString(yolo_.getCfgFile()));
+    ui->namesTag->setText(QString::fromStdString(yolo_.getNamesFile()));
+    ui->weightsTag->setText(QString::fromStdString(yolo_.getWeightsFile()));
+    ui->videoTag->setText(QString::fromStdString(yolo_.getInputFile()));
 }
 
 MainWindow::~MainWindow()
@@ -43,33 +21,55 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::start_detection() {
-    yolo.process_video(this);
+void MainWindow::on_pushButton_clicked()
+{
+    DetectionWindow *window = new DetectionWindow(yolo_);
+    window -> show();
+    hide();
 }
 
-void MainWindow::showEvent(QShowEvent* event) {
-    QMainWindow::showEvent(event);
-    // TODO Move to button result:
-    QTimer::singleShot(50, this, SLOT(start_detection()));
+void MainWindow::on_cfgButton_clicked()
+{
+    std::string current_file = yolo_.getCfgFile();
+    std::string file_extension = "CFG File(*.cfg);;All Files (*)";
+    std::string file_name = getFilePath(current_file, file_extension);
+
+    yolo_.setCfgFile(file_name);
+    ui->cfgTag->setText(QString::fromStdString(file_name));
 }
 
-void MainWindow::display_image(cv::Mat mat_img) {
-    cv::cvtColor(mat_img, mat_img, CV_BGR2RGB);
-    QImage imdisplay((uchar*)mat_img.data, mat_img.cols, mat_img.rows, mat_img.step, QImage::Format_RGB888); //Converts the CV image into Qt standard format
-    ui->detectiondisplay->setPixmap(QPixmap::fromImage(imdisplay));
-    ui->detectiondisplay->update();
-    ui->detectiondisplay->repaint();
-    //ui->retranslateUi(this);
+void MainWindow::on_namesButton_clicked()
+{
+    std::string current_file = yolo_.getNamesFile();
+    std::string file_extension = "Names File(*.names);;All Files (*)";
+    std::string file_name = getFilePath(current_file, file_extension);
+
+    yolo_.setNamesFile(file_name);
+    ui->namesTag->setText(QString::fromStdString(file_name));
 }
 
-void MainWindow::display_detection(std::string info_text) {
-    ui->detectionoutput->setText(QString(info_text.c_str()));
-    ui->detectionoutput->update();
-    ui->detectionoutput->repaint();
+void MainWindow::on_weightsButton_clicked()
+{
+    std::string current_file = yolo_.getWeightsFile();
+    std::string file_extension = "Weights File(*.weights);;All Files (*)";
+    std::string file_name = getFilePath(current_file, file_extension);
+
+    yolo_.setWeightsFile(file_name);
+    ui->weightsTag->setText(QString::fromStdString(file_name));
 }
 
-void MainWindow::display_fps(std::string fps_text) {
-    ui->fpsoutput->setText(QString(fps_text.c_str()));
-    ui->fpsoutput->update();
-    ui->fpsoutput->repaint();
+void MainWindow::on_videoButton_clicked()
+{
+    std::string current_file = yolo_.getInputFile();
+    std::string file_extension = "Video File(*.mp4);;All Files (*)";
+    std::string file_name = getFilePath(current_file, file_extension);
+
+    yolo_.setInputFile(file_name);
+    ui->videoTag->setText(QString::fromStdString(file_name));
+}
+
+std::string MainWindow::getFilePath(std::string current_file, std::string file_extension) {
+    return QFileDialog::getOpenFileName(this,
+                                        tr("Choose File"), QString::fromStdString(current_file),
+                                        tr(file_extension.c_str())).toStdString();
 }

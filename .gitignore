@@ -388,7 +388,7 @@ dmypy.json
 .pyre/
 
 # Datasets
-res/datasets/*B
+res/datasets/*DB
 
 ## Darknet
 darknet/*.o
@@ -430,3 +430,7 @@ darknet/darknet
 darknet/3rdparty/
 darknet/bad.list
 darknet/yolov3.conv.81
+
+# Qt
+src/build*
+src/DarknetGUI/*.pro.user

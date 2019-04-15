@@ -52,14 +52,18 @@ mv <downloaded-weights> .
 python3 darknet_video.py
 ```
 The output would be similar to this one:
-![First detection Safer Auto](first-detection-saferauto.gif)
+<p align="center" >
+  <img src="https://github.com/angeligareta/SaferAuto/blob/master/first-detection-saferauto.gif" />
+</p>
 
 ### GUI for Safer Auto[beta]
 The second way of testing the detector is a Graphical UI to show the detection more user-friendly. It is being developed using QT Creator. For the moment, there is not an out-of-the-box solution, but you can download the files from [src/DarknetGUI](src/DarknetGUI) folder and [QT Creator](https://www.qt.io/download) and try it out! 
 
 Here there is an example of the beta GUI for Safer Auto:
 
-![SaferAuto GUI demo](gui-saferauto.gif)
+<p align="center" >
+  <img src="https://github.com/angeligareta/SaferAuto/blob/master/gui-saferauto.gif" />
+</p>
 
 ## Author
 [**Ángel Igareta**](https://github.com/angeligareta) - Computer Engineering Student

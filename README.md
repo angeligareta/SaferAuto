@@ -68,7 +68,7 @@ git clone https://github.com/angeligareta/SaferAuto.git
 cd SaferAuto/
 mkdir -p darknet/weights/edb
 mv <downloaded-weights> darknet/weights/edb/yolov3-spp_4000.weights
-LD_LIBRARY_PATH=lib ./build/SaferAutoGUI
+LD_LIBRARY_PATH=lib ./SaferAutoGUI
 ```
 
 Once these commands have been executed, the main window will open. In this first window, there are 4 options you can change, the configuration, names, weights and input file paths for testing the SaferAuto detector. Once you have selected the correct configuration (there is one selected by default), you can press the start button to start detecting!

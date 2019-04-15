@@ -2,10 +2,10 @@
 
 YOLO::YOLO()
 {
-    this->names_file_ = "../darknet/cfg/general/general.names";
-    this->cfg_file_ = "../darknet/cfg/general/yolov3-spp.cfg";
-    this->weights_file_ = "../darknet/weights/general/yolov3-spp_4000.weights";
-    this->input_file_ = "../res/media/test-video-light.mp4";
+    this->names_file_ = "./darknet/cfg/edb/edb.names";
+    this->cfg_file_ = "./darknet/cfg/edb/yolov3-spp.cfg";
+    this->weights_file_ = "./darknet/weights/edb/yolov3-spp_4000.weights";
+    this->input_file_ = "./res/media/test-video-light.mp4";
 }
 
 YOLO::YOLO(std::string cfg_file_, std::string names_file_, std::string weights_file_, std::string filename)

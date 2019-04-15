@@ -77,8 +77,11 @@ Once these commands have been executed, the main window will open. In this first
 
 You can see the interface windows here:
 <p align="center" >
-  <img src="https://github.com/angeligareta/SaferAuto/blob/master/res/media/main-window.png" />
-  <img src="https://github.com/angeligareta/SaferAuto/blob/master/res/media/detection-window.png" />
+  <img height="400" width="600" src="https://github.com/angeligareta/SaferAuto/blob/master/res/media/main-window.png" />
+</p>
+<hr style="margin-top: "10px" margin-bottom: "10px" height: 1px; color: red; background-color: red;"/>
+<p align="center" >
+  <img height="400" width="600" src="https://github.com/angeligareta/SaferAuto/blob/master/res/media/detection-window.png" />
 </p>
 
 #### Demo

@@ -16,7 +16,7 @@
 *.map
 *.exp
 
-# Precompiled Headers
+# Precompiled HeadersgetNamesFile
 *.gch
 *.pch
 
@@ -437,3 +437,6 @@ build/
 *.txt
 *.list
 .idea/
+config.ini
+Keras/
+Tensor/

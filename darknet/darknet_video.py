@@ -40,7 +40,6 @@ altNames = None
 
 
 def YOLO():
-
     global metaMain, netMain, altNames
     configPath = "./cfg/edb/yolov3-spp.cfg"
     weightPath = "./weights/edb/yolov3-spp_4000.weights"

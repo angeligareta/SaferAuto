@@ -1,19 +1,13 @@
 #include "include/yolo.h"
 
-YOLO::YOLO()
-{
-    this->names_file_ = "./darknet/cfg/edb/edb.names";
-    this->cfg_file_ = "./darknet/cfg/edb/yolov3-spp.cfg";
-    this->weights_file_ = "./darknet/weights/edb/yolov3-spp_4000.weights";
-    this->input_file_ = "./res/media/test-video-light.mp4";
-}
+YOLO::YOLO(){}
 
 YOLO::YOLO(std::string cfg_file_, std::string names_file_, std::string weights_file_, std::string filename)
 {
-    this->cfg_file_ = cfg_file_;
-    this->names_file_ = names_file_;
-    this->weights_file_ = weights_file_;
-    this->input_file_ = filename;
+    setCfgFile(cfg_file_);
+    setNamesFile(names_file_);
+    setWeightsFile(weights_file_);
+    setInputFile(filename);
 }
 
 cv::Mat YOLO::drawBoxes(cv::Mat mat_img, std::vector<bbox_t> result_vec, std::vector<std::string> obj_names, DetectionWindow* window) {
@@ -30,8 +24,8 @@ cv::Mat YOLO::drawBoxes(cv::Mat mat_img, std::vector<bbox_t> result_vec, std::ve
 
         if(i.obj_id < obj_names.size())
             putText(mat_img, obj_names[i.obj_id], cv::Point2f(i.x, i.y - 10), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, BOX_COLOR);
-        if(i.track_id > 0)
-            putText(mat_img, std::to_string(i.track_id), cv::Point2f(i.x + 5, i.y + 15), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, BOX_COLOR);
+        //if(i.track_id > 0)
+            //putText(mat_img, std::to_string(i.track_id), cv::Point2f(i.x + 5, i.y + 15), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, BOX_COLOR);
     }
 
     return mat_img;
@@ -74,7 +68,7 @@ void YOLO::processVideoFile(Detector detector, std::vector<std::string> obj_name
     preview_boxes_t large_preview(100, 150, false);
     const float kDetectionThreshold = 0.2f;
 
-    for(cv::VideoCapture cap(input_file_); cap >> frame, cap.isOpened();) {
+    for(cv::VideoCapture cap(getInputFile()); cap >> frame, cap.isOpened();) {
         auto begin = std::chrono::steady_clock::now();
         std::vector<bbox_t> result_vec = detector.detect(frame, kDetectionThreshold);
         result_vec = detector.tracking_id(result_vec);
@@ -86,7 +80,12 @@ void YOLO::processVideoFile(Detector detector, std::vector<std::string> obj_name
         window -> displayFPS(fps_text);
 
         //large_preview.set(frame, result_vec);
-        drawBoxes(frame, result_vec, obj_names, window);
+        try {
+            drawBoxes(frame, result_vec, obj_names, window);
+        } catch (...) {
+
+        }
+
         //large_preview.draw(frame, true);
 
         window -> displayImage(frame);
@@ -96,7 +95,7 @@ void YOLO::processVideoFile(Detector detector, std::vector<std::string> obj_name
 }
 
 void YOLO::processImageFile(Detector detector, std::vector<std::string> obj_names, DetectionWindow* window) {
-    cv::Mat mat_img = cv::imread(input_file_);
+    cv::Mat mat_img = cv::imread(getInputFile());
     std::vector<bbox_t> result_vec = detector.detect(mat_img);
 
     drawBoxes(mat_img, result_vec, obj_names, window);
@@ -108,11 +107,11 @@ void YOLO::processImageFile(Detector detector, std::vector<std::string> obj_name
 
 void YOLO::processInputFile(DetectionWindow* window)
 {
-    Detector detector(cfg_file_, weights_file_);
-    auto obj_names = getObjectNamesFromFile(names_file_);
+    Detector detector(getCfgFile(), getWeightsFile());
+    auto obj_names = getObjectNamesFromFile(getNamesFile());
 
     try {
-        const std::string kFileExt = input_file_.substr(input_file_.find_last_of(".") + 1);
+        const std::string kFileExt = getInputFile().substr(getInputFile().find_last_of(".") + 1);
         if (kFileExt == "avi" || kFileExt == "mp4" || kFileExt == "mjpg" || kFileExt == "mov") {	// Video file
             processVideoFile(detector, obj_names, window);
         }
@@ -130,40 +129,40 @@ void YOLO::processInputFile(DetectionWindow* window)
 
 void YOLO::setCfgFile(const std::string &value)
 {
-    cfg_file_ = value;
+    settings_->setValue(CFG_FILE, QString::fromStdString(value));
 }
 
 void YOLO::setNamesFile(const std::string &value)
 {
-    names_file_ = value;
+    settings_->setValue(NAMES_FILE, QString::fromStdString(value));
 }
 
 void YOLO::setWeightsFile(const std::string &value)
 {
-    weights_file_ = value;
+    settings_->setValue(WEIGHTS_FILE, QString::fromStdString(value));
 }
 
 void YOLO::setInputFile(const std::string &value)
 {
-    input_file_ = value;
+    settings_->setValue(INPUT_FILE, QString::fromStdString(value));
 }
 
 std::string YOLO::getCfgFile() const
 {
-    return cfg_file_;
+    return settings_->value(CFG_FILE, CFG_FILE_DEFAULT_PATH).toString().toStdString();
 }
 
 std::string YOLO::getNamesFile() const
 {
-    return names_file_;
+    return settings_->value(NAMES_FILE, NAMES_FILE_DEFAULT_PATH).toString().toStdString();
 }
 
 std::string YOLO::getWeightsFile() const
 {
-    return weights_file_;
+    return settings_->value(WEIGHTS_FILE, WEIGHTS_FILE_DEFAULT_PATH ).toString().toStdString();
 }
 
 std::string YOLO::getInputFile() const
 {
-    return input_file_;
+    return settings_->value(INPUT_FILE, INPUT_FILE_DEFAULT_PATH).toString().toStdString();
 }

@@ -7,10 +7,12 @@
 #include <vector>
 #include <fstream>
 #include <thread>
+#include <QSettings>
+#include <QString>
 
 #define OPENCV
-//#define TRACK_OPTFLOW
-//#define GPU
+// #define TRACK_OPTFLOW
+// #define GPU
 
 #include "yolo_v2_class.hpp" // imported functions from DLL
 #include "opencv2/core/version.hpp"
@@ -24,17 +26,23 @@ class DetectionWindow;
 #include <opencv2/opencv.hpp> // C++s
 #endif*/
 
-class YOLO
-{
+const QString CFG_FILE = "cfg_file";
+const QString NAMES_FILE = "names_file";
+const QString WEIGHTS_FILE = "weights_file";
+const QString INPUT_FILE = "input_file";
+const QString CONFIG_FILE = "config.ini";
 
+const QString CFG_FILE_DEFAULT_PATH = "./darknet/cfg/edb/yolov3-spp.cfg";
+const QString NAMES_FILE_DEFAULT_PATH = "./darknet/cfg/edb/edb.names";
+const QString WEIGHTS_FILE_DEFAULT_PATH = "./darknet/weights/edb/yolov3-spp_4000.weights";
+const QString INPUT_FILE_DEFAULT_PATH = "./res/media/test-video-light.mp4";
+
+class YOLO {
 private:
-    std::string cfg_file_;
-    std::string names_file_;
-    std::string weights_file_;
-    std::string input_file_;
+    QSettings* settings_ = new QSettings(CONFIG_FILE, QSettings::NativeFormat);
     const cv::Scalar BOX_COLOR = cv::Scalar(60, 160, 260);
 
-public:
+public:    
     YOLO();
     YOLO(std::string cfgFile, std::string namesFile, std::string weightsFile, std::string filename);
 

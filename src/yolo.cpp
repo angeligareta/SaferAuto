@@ -1,12 +1,14 @@
 #include "include/yolo.h"
 
-YOLO::YOLO(){}
+YOLO::YOLO() {}
 
 cv::Mat YOLO::drawBoxes(cv::Mat mat_img, std::vector<bbox_t> result_vec, std::vector<std::string> obj_names, DetectionWindow* window) {
     for (auto &i : result_vec) {
         cv::Rect detection_roi = cv::Rect(i.x, i.y, i.w, i.h);
         cv::Mat detected_element = mat_img(detection_roi);
         std::string element_class = obj_names[i.obj_id];
+
+        addDetectedElement(detected_element, element_class, window);
         cv::rectangle(mat_img, detection_roi, BOX_COLOR, 3); // Add bounding box of object to img
 
         // if(i.obj_id < obj_names.size())
@@ -29,7 +31,8 @@ void YOLO::showResult(std::vector<bbox_t> const result_vec, std::vector<std::str
         if (obj_names.size() > i.obj_id) {
             //std::cout << obj_names[i.obj_id] << " - ";
         }
-        std::string info_text = "Last TS detected: " + obj_names[i.obj_id] + ". Probability: " + std::to_string(i.prob) + "%";
+        double normalized_prob = round(i.prob * 1000.0)/10.0;
+        std::string info_text = "Last TS detected: " + obj_names[i.obj_id] + ". Probability: " + std::to_string(normalized_prob) + "%";
 
         window->displayDetection(info_text);
 
@@ -57,10 +60,12 @@ void YOLO::processVideoFile(Detector detector, std::vector<std::string> obj_name
 {
     cv::Mat frame;
     detector.nms = 0.02f;
-
     const float kDetectionThreshold = 0.5f;
 
-    for(cv::VideoCapture cap(getInputFile()); cap.isOpened(), cap >> frame, cap.isOpened();) {
+    cv::VideoCapture cap(getInputFile());
+    while(!hasExitSignal() && cap.isOpened()) {
+        cap >> frame; // Read new capture
+
         auto begin = std::chrono::steady_clock::now();
         std::vector<bbox_t> result_vec = detector.detect(frame, kDetectionThreshold);
         result_vec = detector.tracking_id(result_vec);
@@ -86,10 +91,9 @@ void YOLO::processVideoFile(Detector detector, std::vector<std::string> obj_name
 
         // For not blocking UI
         QCoreApplication::processEvents();
-        if (exit_signal_) {
-            cap.release(); //TODO: Solve double free or corruption (!prev)
-        }
     }
+
+    cap.release();
 }
 
 void YOLO::processImageFile(Detector detector, std::vector<std::string> obj_names, DetectionWindow* window) {
@@ -168,4 +172,9 @@ std::string YOLO::getInputFile() const
 void YOLO::setExitSignal()
 {
     exit_signal_ = true;
+}
+
+bool YOLO::hasExitSignal()
+{
+    return exit_signal_;
 }

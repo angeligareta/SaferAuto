@@ -1,6 +1,7 @@
 #ifndef STARTWINDOW_H
 #define STARTWINDOW_H
 
+#include <QLabel>
 #include <QDialog>
 #include <QApplication>
 #include <QDesktopWidget>
@@ -34,6 +35,13 @@ private slots:
 private:
     Ui::MainWindow *ui;
     YOLO yolo_;
+
+    /**
+     * @brief setTagText Set a tag text in the main window only if the file exists.
+     * @param tag
+     * @param text
+     */
+    void setTagText(QLabel* tag, QString text);
 };
 
 #endif // STARTWINDOW_H

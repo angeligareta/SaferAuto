@@ -13,7 +13,7 @@
 
 #define OPENCV
 // #define TRACK_OPTFLOW
-// #define GPU
+#define GPU
 
 #include "yolo_v2_class.hpp" // imported functions from DLL
 #include "opencv2/core/version.hpp"
@@ -187,6 +187,11 @@ public:
      * @param value
      */
     void setExitSignal();
+
+    /**
+     * @brief hasExitSignal
+     */
+    bool hasExitSignal();
 };
 
 #endif // YOLO_H

@@ -9,10 +9,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->setupUi(this);
 
-    ui->cfgTag->setText(QString::fromStdString(yolo_.getCfgFile()));
-    ui->namesTag->setText(QString::fromStdString(yolo_.getNamesFile()));
-    ui->weightsTag->setText(QString::fromStdString(yolo_.getWeightsFile()));
-    ui->mediaTag->setText(QString::fromStdString(yolo_.getInputFile()));
+    setTagText(ui->cfgTag, QString::fromStdString(yolo_.getCfgFile()));
+    setTagText(ui->namesTag, QString::fromStdString(yolo_.getNamesFile()));
+    setTagText(ui->weightsTag, QString::fromStdString(yolo_.getWeightsFile()));
+    setTagText(ui->mediaTag, QString::fromStdString(yolo_.getInputFile()));
 }
 
 void MainWindow::centerAndResize() {
@@ -37,7 +37,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked()
 {
-    DetectionWindow *window = new DetectionWindow(yolo_);
+    DetectionWindow *window = new DetectionWindow(yolo_, this);
     window -> show();
     hide();
 }
@@ -86,4 +86,8 @@ std::string MainWindow::getFilePath(std::string current_file, std::string file_e
     return QFileDialog::getOpenFileName(this,
                                         tr("Choose File"), QString::fromStdString(current_file),
                                         tr(file_extension.c_str())).toStdString();
+}
+
+void MainWindow::setTagText(QLabel* tag, QString text) {
+    tag->setText((std::ifstream(text.toStdString()).good()) ? text : "");
 }

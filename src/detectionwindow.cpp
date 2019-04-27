@@ -10,7 +10,8 @@
 
 DetectionWindow::DetectionWindow(YOLO yolo, QWidget *parent) :
                                                                ui(new Ui::DetectionWindow),
-                                                               yolo_(yolo)
+                                                               yolo_(yolo),
+                                                               parent_(parent)
 {
     QRect screen_geometry = QApplication::desktop() -> availableGeometry();
     int screen_width = screen_geometry.width();
@@ -73,4 +74,13 @@ void DetectionWindow::displayFPS(std::string fps_text) {
     ui->fpsoutput->setText(QString(fps_text.c_str()));
     ui->fpsoutput->update();
     ui->fpsoutput->repaint();
+}
+
+void DetectionWindow::closeEvent(QCloseEvent *event)
+{
+    std::cout << "Thanks for using the SaferAuto detector!" << std::endl;
+
+    yolo_.setExitSignal();
+    parent_->show();
+    event->accept();
 }

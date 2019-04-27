@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QDialog>
+#include <QCloseEvent>
 #include <opencv2/opencv.hpp>
 
 namespace Ui {
@@ -27,9 +28,13 @@ public slots:
     void displayImage(cv::Mat mat_img);
     void startDetection();
 
+protected:
+    void closeEvent(QCloseEvent *event);
+
 private:
     Ui::DetectionWindow *ui;
     YOLO yolo_;
+    QWidget* parent_;
 };
 
 #endif // MAINWINDOW_H

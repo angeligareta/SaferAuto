@@ -1,1 +1,1 @@
-./darknet/darknet detector map darknet/cfg/edb/edb.data darknet/cfg/edb/yolov3-tiny.cfg darknet/weights/edb-tiny/
+./darknet/darknet detector map models/cfg/edb/edb.data models/cfg/edb/yolov3-tiny.cfg models/weights/edb-tiny/

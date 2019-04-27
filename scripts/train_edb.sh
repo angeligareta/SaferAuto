@@ -1,1 +1,1 @@
-./darknet/darknet detector train -map darknet/cfg/edb/edb.data darknet/cfg/edb/yolov3-tiny.cfg darknet/weights/yolov3-tiny.conv.15
+./darknet/darknet detector train -map models/cfg/edb/edb.data models/cfg/edb/yolov3-tiny.cfg models/weights/yolov3-tiny.conv.15

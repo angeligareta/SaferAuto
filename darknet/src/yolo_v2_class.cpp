@@ -384,7 +384,7 @@ LIB_API std::vector<bbox_t> Detector::tracking_id(std::vector<bbox_t> cur_bbox_v
 }
 
 
-LIB_API bool Detector::send_json_http(std::vector<bbox_t> cur_bbox_vec, std::vector<std::string> obj_names, int frame_id, std::string filename, int timeout, int port)
+/*LIB_API bool Detector::send_json_http(std::vector<bbox_t> cur_bbox_vec, std::vector<std::string> obj_names, int frame_id, std::string filename, int timeout, int port)
 {
     //int timeout = 400000;
     //int port = 8070;
@@ -429,7 +429,7 @@ LIB_API bool Detector::send_json_http(std::vector<bbox_t> cur_bbox_vec, std::vec
 
     send_json_custom(send_str.c_str(), port, timeout);
     return true;
-}
+}*/
 
 void *Detector::get_cuda_context()
 {

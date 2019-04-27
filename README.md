@@ -47,10 +47,9 @@ The first one is a command-line program that receives a video stream and plays t
 For running this program script you need to have [python3 installed](https://www.python.org/downloads/). Besides, you need to download the [weights file](https://drive.google.com/uc?export=download&confirm=Yp2w&id=1Ddvmwn9WcB__jocW70piDeWzyvGbqUP5) that represents the trained model. Finally, you only have to follow these steps:
 ```
 git clone https://github.com/angeligareta/SaferAuto.git
-cd SaferAuto/darknet/
-mkdir -p weights/edb
-mv <downloaded-weights> weights/edb/yolov3-spp_4000.weights
-python3 darknet_video.py
+mkdir -p models/weights/edb
+mv <downloaded-weights> models/weights/edb/yolov3-spp_4000.weights
+python3 ./darknet/darknet_video.py
 ```
 The output would be similar to this one:
 <p align="center" >
@@ -68,8 +67,8 @@ Finally, to try it out, you only need to follow these steps:
 ```
 git clone https://github.com/angeligareta/SaferAuto.git
 cd SaferAuto/
-mkdir -p darknet/weights/edb
-mv <downloaded-weights> darknet/weights/edb/yolov3-spp_4000.weights
+mkdir -p models/weights/edb
+mv <downloaded-weights> darknet/models/edb/yolov3-spp_4000.weights
 LD_LIBRARY_PATH=lib ./SaferAutoGUI
 ```
 

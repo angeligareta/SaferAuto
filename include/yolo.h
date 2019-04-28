@@ -30,9 +30,9 @@ const QString INPUT_FILE = "input_file";
 const QString CONFIG_FILE = "config.ini";
 
 // DEFAULT PATHS FOR FILES USED IN SAFER AUTO
-const QString CFG_FILE_DEFAULT_PATH = "./darknet/cfg/edb/yolov3-spp.cfg";
-const QString NAMES_FILE_DEFAULT_PATH = "./darknet/cfg/edb/edb.names";
-const QString WEIGHTS_FILE_DEFAULT_PATH = "./darknet/weights/edb/yolov3-spp_4000.weights";
+const QString CFG_FILE_DEFAULT_PATH = "./models/cfg/edb/yolov3-tiny.cfg";
+const QString NAMES_FILE_DEFAULT_PATH = "./models/cfg/edb/edb.names";
+const QString WEIGHTS_FILE_DEFAULT_PATH = "./models/weights/edb-tiny/yolov3-tiny_37000.weights";
 const QString INPUT_FILE_DEFAULT_PATH = "./res/media/test-video-light.mp4";
 
 // Box color for the object detection boxes.

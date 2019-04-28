@@ -41,7 +41,7 @@ INCLUDEPATH += /usr/local/include
 
 DEPENDPATH += $$PWD/darknet
 
-LIBS += -L$$PWD/lib/ -ldarknet
+LIBS += -L$$PWD/darknet/ -ldarknet
 LIBS += `pkg-config --cflags --libs opencv` \
 
 # Default rules for deployment.

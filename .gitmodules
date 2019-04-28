@@ -1,3 +1,6 @@
 [submodule "darknet"]
 	path = darknet
 	url = https://github.com/AlexeyAB/darknet
+[submodule "Datasets2Darknet"]
+	path = Datasets2Darknet
+	url = git@github.com:angeligareta/Datasets2Darknet.git

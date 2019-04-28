@@ -1,0 +1,5 @@
+classes = 5
+train = /home/angeliton/Desktop/SaferAuto/models/datasets/ere/train.txt
+valid = /home/angeliton/Desktop/SaferAuto/res/datasets/ere/test.txt
+names = /home/angeliton/Desktop/SaferAuto/res/datasets/ere/ere.names
+backup = /home/angeliton/Desktop/SaferAuto/darknet/weights/ere-tiny

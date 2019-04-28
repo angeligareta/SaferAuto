@@ -438,8 +438,14 @@ build/
 *.list
 .idea/
 config.ini
+
 Keras/
 Tensor/
+
+# Not storing large files
 models/weights
+models/datasets
+
+# S.O dependent
 lib*/
 build*/

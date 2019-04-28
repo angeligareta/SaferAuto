@@ -1,5 +1,0 @@
-classes = 5
-train = /home/angeliton/Desktop/SaferAuto/res/datasets/EDB/train.txt
-valid = /home/angeliton/Desktop/SaferAuto/res/datasets/EDB/test.txt
-names = /home/angeliton/Desktop/SaferAuto/res/datasets/EDB/edb.names
-backup = /home/angeliton/Desktop/SaferAuto/darknet/weights/edb-tiny

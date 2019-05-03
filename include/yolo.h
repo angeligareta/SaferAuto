@@ -7,6 +7,7 @@
 #include <vector>
 #include <fstream>
 #include <thread>
+#include <map>
 #include <QSettings>
 #include <QString>
 #include <QCoreApplication>
@@ -15,10 +16,14 @@
 // #define TRACK_OPTFLOW
 #define GPU
 
+
 #include "yolo_v2_class.hpp" // imported functions from DLL
 #include "opencv2/core/version.hpp"
 #include "opencv2/videoio/videoio.hpp"
 #pragma comment(lib, "opencv_world320.lib")
+
+#include <baseapi.h>
+#include <allheaders.h> // SET LC_NUMERIC=en_US.UTF-8
 
 class DetectionWindow;
 
@@ -56,6 +61,9 @@ private:
      */
     bool exit_signal_ = false;
 
+    std::map<int, std::string> tracked_elements;
+
+    std::string extractIntegerWords(std::string str);
 public:
     /**
      * @brief YOLO default constructor.
@@ -192,6 +200,8 @@ public:
      * @brief hasExitSignal
      */
     bool hasExitSignal();
+    std::string adjustElementClass(std::string element_class, cv::Mat detected_element);
+    std::string getDigits(cv::Mat image);
 };
 
 #endif // YOLO_H

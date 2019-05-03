@@ -1,12 +1,26 @@
 #include "include/yolo.h"
 
-YOLO::YOLO() {}
+YOLO::YOLO():
+    tracked_elements(){}
 
-cv::Mat YOLO::drawBoxes(cv::Mat mat_img, std::vector<bbox_t> result_vec, std::vector<std::string> obj_names, DetectionWindow* window) {
+cv::Mat YOLO::drawBoxes(cv::Mat mat_img, std::vector<bbox_t> result_vec, std::vector<std::string> obj_names, DetectionWindow* window){
     for (auto &i : result_vec) {
         cv::Rect detection_roi = cv::Rect(i.x, i.y, i.w, i.h);
         cv::Mat detected_element = mat_img(detection_roi);
-        std::string element_class = obj_names[i.obj_id];
+
+        std::string element_class;
+        if (tracked_elements.count(i.track_id) == 0) {
+            element_class = adjustElementClass(obj_names[i.obj_id], detected_element);
+            if (element_class != obj_names[i.obj_id]) {
+                std::cout << "Inserting... " << element_class;
+                tracked_elements.insert(std::pair<int, std::string>(i.track_id, element_class));
+            }
+        }
+        else {
+            element_class = tracked_elements.at(i.track_id);
+        }
+
+        std::cout << element_class << std::endl;
 
         addDetectedElement(detected_element, element_class, window);
         cv::rectangle(mat_img, detection_roi, BOX_COLOR, 3); // Add bounding box of object to img
@@ -35,9 +49,59 @@ void YOLO::showResult(std::vector<bbox_t> const result_vec, std::vector<std::str
         std::string info_text = "Last TS detected: " + obj_names[i.obj_id] + ". Probability: " + std::to_string(normalized_prob) + "%";
 
         window->displayDetection(info_text);
-
     }
 }
+
+std::string YOLO::adjustElementClass(std::string element_class, cv::Mat detected_element) {
+//    if (element_class == "prohibitory") {
+//        std::string detected_text = getDigits(detected_element);
+//        return (detected_text != "") ? ("Speed Limit sign -> " + detected_text) : element_class;
+//    }
+//    else {
+        return element_class;
+//    }
+}
+
+std::string YOLO::getDigits(cv::Mat image) {
+    // Create Tesseract object
+    tesseract::TessBaseAPI *ocr = new tesseract::TessBaseAPI();
+
+    // Initialize tesseract to use English (eng) and the LSTM OCR engine.
+    ocr->Init("./lib/tesseract-api/tessdata", "eng", tesseract::OEM_TESSERACT_ONLY);
+
+    // Set image data
+    ocr->SetImage(image.data, image.cols, image.rows, 3, image.step);
+    ocr->Recognize(0);
+
+    const float kMinConfidence = 70.00;
+    std::string detected_text = "";
+
+    // Get confidence from result
+    tesseract::ResultIterator* ri = ocr->GetIterator();
+    tesseract::PageIteratorLevel level = tesseract::RIL_WORD;
+    if (ri != 0) {
+        std::string word = ri->GetUTF8Text(level);
+        std::string digits = extractIntegerWords(word);
+        float confidence = ri->Confidence(level);
+
+        if ((confidence > kMinConfidence) && (digits.size() > 1)) { // MAX CONFIDENCE
+            detected_text = word;
+        }
+    }
+    return detected_text;
+}
+
+std::string YOLO::extractIntegerWords(std::string str)
+{
+    std::string digits = "";
+    for (char character : str) {
+        if (std::isdigit(character)) {
+            digits += character;
+        }
+    }
+    return digits;
+}
+
 
 std::vector<std::string> YOLO::getObjectNamesFromFile(std::string const filename) {
     std::ifstream file(filename);

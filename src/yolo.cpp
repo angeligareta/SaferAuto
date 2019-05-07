@@ -8,17 +8,17 @@ cv::Mat YOLO::drawBoxes(cv::Mat mat_img, std::vector<bbox_t> result_vec, std::ve
         cv::Rect detection_roi = cv::Rect(i.x, i.y, i.w, i.h);
         cv::Mat detected_element = mat_img(detection_roi);
 
-        std::string element_class;
-        if (tracked_elements.count(i.track_id) == 0) {
-            element_class = adjustElementClass(obj_names[i.obj_id], detected_element);
-            if (element_class != obj_names[i.obj_id]) {
-                std::cout << "Inserting... " << element_class;
-                tracked_elements.insert(std::pair<int, std::string>(i.track_id, element_class));
-            }
-        }
-        else {
-            element_class = tracked_elements.at(i.track_id);
-        }
+        std::string element_class = obj_names[i.obj_id];
+//        if (tracked_elements.count(i.track_id) == 0) {
+//            element_class = adjustElementClass(obj_names[i.obj_id], detected_element);
+//            if (element_class != obj_names[i.obj_id]) {
+//                std::cout << "Inserting... " << element_class;
+//                tracked_elements.insert(std::pair<int, std::string>(i.track_id, element_class));
+//            }
+//        }
+//        else {
+//            element_class = tracked_elements.at(i.track_id);
+//        }
 
         std::cout << element_class << std::endl;
 
@@ -53,13 +53,13 @@ void YOLO::showResult(std::vector<bbox_t> const result_vec, std::vector<std::str
 }
 
 std::string YOLO::adjustElementClass(std::string element_class, cv::Mat detected_element) {
-//    if (element_class == "prohibitory") {
-//        std::string detected_text = getDigits(detected_element);
-//        return (detected_text != "") ? ("Speed Limit sign -> " + detected_text) : element_class;
-//    }
-//    else {
+    if (element_class == "prohibitory") {
+        std::string detected_text = getDigits(detected_element);
+        return (detected_text != "") ? ("SL: " + detected_text) : element_class;
+    }
+    else {
         return element_class;
-//    }
+    }
 }
 
 std::string YOLO::getDigits(cv::Mat image) {
@@ -67,7 +67,7 @@ std::string YOLO::getDigits(cv::Mat image) {
     tesseract::TessBaseAPI *ocr = new tesseract::TessBaseAPI();
 
     // Initialize tesseract to use English (eng) and the LSTM OCR engine.
-    ocr->Init("./lib/tesseract-api/tessdata", "eng", tesseract::OEM_TESSERACT_ONLY);
+    ocr->Init("./lib/tesseract-api/tessdata", "eng", tesseract::OEM_TESSERACT_LSTM_COMBINED);
 
     // Set image data
     ocr->SetImage(image.data, image.cols, image.rows, 3, image.step);
@@ -133,12 +133,9 @@ void YOLO::processVideoFile(Detector detector, std::vector<std::string> obj_name
         auto begin = std::chrono::steady_clock::now();
         std::vector<bbox_t> result_vec = detector.detect(frame, kDetectionThreshold);
         result_vec = detector.tracking_id(result_vec);
-        auto end = std::chrono::steady_clock::now();
 
-        double elapsed_secs = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
-        int fps = static_cast<int>(1000.0 / elapsed_secs);
-        std::string fps_text = "CURRENT FPS: " + std::to_string(fps) + " fps";
-        window -> displayFPS(fps_text);
+
+
 
         // preview_boxes_t large_preview(100, 150, false);
         // large_preview.set(frame, result_vec);
@@ -150,8 +147,13 @@ void YOLO::processVideoFile(Detector detector, std::vector<std::string> obj_name
             // TODO: Correct
         }
         window -> displayImage(frame);
-        window -> displayFPS(fps_text);
         showResult(result_vec, obj_names, window);
+
+        auto end = std::chrono::steady_clock::now();
+        double elapsed_secs = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
+        int fps = static_cast<int>(1000.0 / elapsed_secs);
+        std::string fps_text = "CURRENT FPS: " + std::to_string(fps) + " fps";
+        window -> displayFPS(fps_text);
 
         // For not blocking UI
         QCoreApplication::processEvents();

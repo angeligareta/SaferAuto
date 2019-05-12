@@ -449,3 +449,6 @@ models/datasets
 # S.O dependent
 lib*/
 build*/
+
+# Demo videos
+res/demo-videos/test-video-light-2.mp4

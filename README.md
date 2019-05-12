@@ -64,12 +64,12 @@ The second way of testing the detector is a Graphical UI that shows the detectio
 - Nvidia GPU and correct driver.
 - CUDA and OPENCV. I have written a [tutorial](https://saferauto.home.blog/2019/04/06/4o-how-to-install-yolo-darknet-with-cuda-and-opencv-in-ubuntu/) about it. You would need to follow the steps **CUDA INSTALLATION**(Nvidia GPU required) and **Installing OPENCV**.
 - [QT Creator 5.12](https://www.qt.io/download). It is important to install this version.
-- [Weights file](https://drive.google.com/uc?export=download&confirm=Yp2w&id=1Ddvmwn9WcB__jocW70piDeWzyvGbqUP5) that represents the trained model.
+- [Weights file](https://drive.google.com/uc?export=download&confirm=Yp2w&id=12ZeXoDsPeNnk7X66LEtOBeDCYNbBbj4C) that represents the trained model.
 THe next step would be to set the weights file in the correct folder:
 ```
 cd SaferAuto/
-mkdir -p models/weights/edb
-mv <downloaded-weights> models/edb/yolov3-spp_4000.weights
+mkdir -p models/weights/
+mv <downloaded-weights> models/weights/yolov3-saferauto.weights
 ```
 
 #### Compiling

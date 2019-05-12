@@ -100,11 +100,6 @@ You can see the interface windows here:
   <img height="400" width="600" src="https://github.com/angeligareta/SaferAuto/blob/master/res/media/detection-window.png" />
 </p>
 
-#### Demo
-<p align="center" >
-  <img src="https://github.com/angeligareta/SaferAuto/blob/master/res/media/gui-saferauto.gif" />
-</p>
-
 ## Bibliography
 Here I show some of the latest documentation I have found related with Advanced Driver Assistance Systems (ADAS).
 

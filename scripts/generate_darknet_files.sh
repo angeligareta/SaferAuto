@@ -16,7 +16,10 @@ make
 
 # Save important compiled file
 mv libdarknet.so ../lib
+mv darknet ../darknet-exec
 
 # Revert changes
 git stash
 make clean
+
+mv ../darknet-exec darknet

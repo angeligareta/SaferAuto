@@ -22,13 +22,15 @@ SOURCES += \
         src/main.cpp \
         src/yolo.cpp \
         src/detectionwindow.cpp \
-        src/mainwindow.cpp
+        src/mainwindow.cpp \
+        src/yoloclassclassifier.cpp
 
 HEADERS += \
         include/yolo_v2_class.hpp \
         include/yolo.h \
         include/detectionwindow.h \
-        include/mainwindow.h
+        include/mainwindow.h \
+        include/yoloclassclassifier.h
 
 FORMS += \
         ui/detectionwindow.ui \

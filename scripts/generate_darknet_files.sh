@@ -15,11 +15,4 @@ sed -i 's/LIBSO=.*/LIBSO=1/' Makefile
 make
 
 # Save important compiled file
-mv libdarknet.so ../lib
-mv darknet ../darknet-exec
-
-# Revert changes
-git stash
-make clean
-
-mv ../darknet-exec darknet
+cp libdarknet.so ../lib

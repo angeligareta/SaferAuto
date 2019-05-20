@@ -17,8 +17,6 @@
 #endif
 #endif
 
-#define OPENCV
-
 #define C_SHARP_MAX_OBJECTS 1000
 
 struct bbox_t {
@@ -51,6 +49,7 @@ struct bbox_t_container {
 #include <sstream>
 #include <iostream>
 #include <cmath>
+#include <fstream>
 
 #ifdef OPENCV
 #include <opencv2/opencv.hpp>            // C++
@@ -65,6 +64,32 @@ extern "C" LIB_API int dispose();
 extern "C" LIB_API int get_device_count();
 extern "C" LIB_API int get_device_name(int gpu, char* deviceName);
 extern "C" LIB_API void send_json_custom(char const* send_buf, int port, int timeout);
+
+/**
+ * @brief getObjectNamesFromFile returns a list of strings representing every line
+ * in the text file received by parameter.
+ *
+ * @param filename
+ * @return
+ */
+static std::vector<std::string> getObjectNamesFromFile(std::string const filename)
+{
+    std::ifstream file(filename);
+    std::vector<std::string> file_lines;
+
+    if (!file.is_open())
+    {
+        return file_lines;
+    }
+
+    // Read lines from object names file.
+    for (std::string line; file >> line;)
+    {
+        file_lines.push_back(line);
+    }
+    std::cout << "Object names loaded \n";
+    return file_lines;
+}
 
 class Detector {
     std::shared_ptr<void> detector_gpu_ptr;
@@ -134,33 +159,28 @@ public:
         else if (img_src.channels() == 1) cv::cvtColor(img_src, img, cv::COLOR_GRAY2BGR);
         else std::cerr << " Warning: img_src.channels() is not 1, 3 or 4. It is = " << img_src.channels() << std::endl;
         std::shared_ptr<image_t> image_ptr(new image_t, [](image_t *img) { free_image(*img); delete img; });
-        std::shared_ptr<IplImage> ipl_small = std::make_shared<IplImage>(img);
-        *image_ptr = ipl_to_image(ipl_small.get());
+        *image_ptr = mat_to_image_custom(img);
         return image_ptr;
     }
 
 private:
 
-    static image_t ipl_to_image(IplImage* src)
+    static image_t mat_to_image_custom(cv::Mat mat)
     {
-        unsigned char *data = (unsigned char *)src->imageData;
-        int h = src->height;
-        int w = src->width;
-        int c = src->nChannels;
-        int step = src->widthStep;
-        image_t out = make_image_custom(w, h, c);
-        int count = 0;
-
-        for (int k = 0; k < c; ++k) {
-            for (int i = 0; i < h; ++i) {
-                int i_step = i*step;
-                for (int j = 0; j < w; ++j) {
-                    out.data[count++] = data[i_step + j*c + k] / 255.;
+        int w = mat.cols;
+        int h = mat.rows;
+        int c = mat.channels();
+        image_t im = make_image_custom(w, h, c);
+        unsigned char *data = (unsigned char *)mat.data;
+        int step = mat.step;
+        for (int y = 0; y < h; ++y) {
+            for (int k = 0; k < c; ++k) {
+                for (int x = 0; x < w; ++x) {
+                    im.data[k*w*h + y*w + x] = data[y*step + x*c + k] / 255.0f;
                 }
             }
         }
-
-        return out;
+        return im;
     }
 
     static image_t make_empty_image(int w, int h, int c)
@@ -229,6 +249,7 @@ public:
     }
 };
 // --------------------------------------------------------------------------------
+
 
 
 #if defined(TRACK_OPTFLOW) && defined(OPENCV) && defined(GPU)

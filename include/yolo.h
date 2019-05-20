@@ -16,14 +16,13 @@
 // #define TRACK_OPTFLOW
 #define GPU
 
-
-#include "yolo_v2_class.hpp" // imported functions from DLL
+// YOLO methods from DLL
+#include "yolo_v2_class.hpp"
 #include "opencv2/core/version.hpp"
 #include "opencv2/videoio/videoio.hpp"
 #pragma comment(lib, "opencv_world320.lib")
 
-#include <baseapi.h>
-#include <allheaders.h> // SET LC_NUMERIC=en_US.UTF-8
+#include "yoloclassclassifier.h"
 
 class DetectionWindow;
 
@@ -63,7 +62,8 @@ private:
 
     std::map<int, std::string> tracked_elements;
 
-    std::string extractIntegerWords(std::string str);
+    YoloClassClassifier yolo_class_classifier_;
+
 public:
     /**
      * @brief YOLO default constructor.
@@ -103,15 +103,6 @@ public:
      * @param window
      */
     void showResult(std::vector<bbox_t> const result_vec, std::vector<std::string> const obj_names, DetectionWindow *window);
-
-    /**
-     * @brief getObjectNamesFromFile returns a list of strings representing every line
-     * in the text file received by parameter.
-     *
-     * @param filename
-     * @return
-     */
-    std::vector<std::string> getObjectNamesFromFile(const std::string filename);
 
     /**
      * @brief processInputFile depending on the file received as input,
@@ -200,8 +191,6 @@ public:
      * @brief hasExitSignal
      */
     bool hasExitSignal();
-    std::string adjustElementClass(std::string element_class, cv::Mat detected_element);
-    std::string getDigits(cv::Mat image);
 };
 
 #endif // YOLO_H

@@ -9,14 +9,14 @@ namespace Ui {
     class DetectionWindow;
 }
 
-#include "yolo.h"
+#include "yolodetector.h"
 
 class DetectionWindow : public QDialog
 {
     Q_OBJECT
 
 public:
-    DetectionWindow(YOLO yolo, QWidget *parent = nullptr);
+    DetectionWindow(YoloDetector yolo, QWidget *parent = nullptr);
     ~DetectionWindow();
     void displayDetection(std::string info_text);
     void displayFPS(std::string fps_text);
@@ -33,7 +33,7 @@ protected:
 
 private:
     Ui::DetectionWindow *ui;
-    YOLO yolo_;
+    YoloDetector yolo_;
     QWidget* parent_;
 };
 

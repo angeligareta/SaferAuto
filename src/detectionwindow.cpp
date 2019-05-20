@@ -8,7 +8,7 @@
 
 #include <iostream>
 
-DetectionWindow::DetectionWindow(YOLO yolo, QWidget *parent) :
+DetectionWindow::DetectionWindow(YoloDetector yolo, QWidget *parent) :
                                                                ui(new Ui::DetectionWindow),
                                                                yolo_(yolo),
                                                                parent_(parent)

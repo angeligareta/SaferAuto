@@ -8,7 +8,7 @@
 #include <QGuiApplication>
 #include <QFileDialog>
 
-#include "yolo.h"
+#include "yolodetector.h"
 #include "detectionwindow.h"
 
 namespace Ui {
@@ -34,7 +34,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    YOLO yolo_;
+    YoloDetector yolo_;
 
     /**
      * @brief setTagText Set a tag text in the main window only if the file exists.

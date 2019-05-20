@@ -1,14 +1,14 @@
-#include "include/yolo.h"
+#include "include/yolodetector.h"
 
-YOLO::YOLO():
+YoloDetector::YoloDetector():
                yolo_class_classifier_(){}
 
-YOLO::~YOLO() {
+YoloDetector::~YoloDetector() {
     delete yolo_detector_;
     delete detection_window_;
 }
 
-cv::Mat YOLO::drawBoxes(cv::Mat mat_img, const std::vector<bbox_t>& results, const std::vector<std::string>& element_names) {
+cv::Mat YoloDetector::drawBoxes(cv::Mat mat_img, const std::vector<bbox_t>& results, const std::vector<std::string>& element_names) {
     for (auto &i : results) {
         std::string element_class;
 
@@ -30,7 +30,7 @@ cv::Mat YOLO::drawBoxes(cv::Mat mat_img, const std::vector<bbox_t>& results, con
     return mat_img;
 }
 
-void YOLO::showResult(cv::Mat mat_img, cv::Rect detection_roi, cv::Mat detected_element,
+void YoloDetector::showResult(cv::Mat mat_img, cv::Rect detection_roi, cv::Mat detected_element,
                       const std::string element_class, const double normalized_probability) {
     std::string info_text = "Last TS detected: " + element_class + ". Probability: " + std::to_string(normalized_probability) + "%";
     detection_window_ -> displayDetection(info_text);
@@ -49,7 +49,7 @@ void YOLO::showResult(cv::Mat mat_img, cv::Rect detection_roi, cv::Mat detected_
     //    putText(mat_img, std::to_string(i.track_id), cv::Point2f(i.x + 5, i.y + 15), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, BOX_COLOR);
 }
 
-void YOLO::processVideoFile(const std::vector<std::string>& element_names)
+void YoloDetector::processVideoFile(const std::vector<std::string>& element_names)
 {
     cv::Mat frame;
     yolo_detector_->nms = NMS_THRESHOLD; // Set nont-maximum supression threshold for track_id
@@ -81,7 +81,7 @@ void YOLO::processVideoFile(const std::vector<std::string>& element_names)
     cap.release();
 }
 
-void YOLO::processImageFile(const std::vector<std::string>& element_names) {
+void YoloDetector::processImageFile(const std::vector<std::string>& element_names) {
     cv::Mat mat_img = cv::imread(getInputFile());
     std::vector<bbox_t> results = yolo_detector_->detect(mat_img, DETECTION_THRESHOLD);
 
@@ -92,7 +92,7 @@ void YOLO::processImageFile(const std::vector<std::string>& element_names) {
     std::this_thread::sleep_for(std::chrono::milliseconds(10000));
 }
 
-void YOLO::processInputFile()
+void YoloDetector::processInputFile()
 {
     if (detection_window_ == nullptr) {
         std::cerr << "Detection window not defined." << std::endl;
@@ -119,71 +119,71 @@ void YOLO::processInputFile()
     }
 }
 
-unsigned int YOLO::getCurrentFPS()
+unsigned int YoloDetector::getCurrentFPS()
 {
     double elapsed_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(end_ - begin_).count();
     return static_cast<unsigned int>(1000.0 / elapsed_milliseconds);
 }
 
 
-void YOLO::startTimer() {
+void YoloDetector::startTimer() {
     begin_ = std::chrono::steady_clock::now();
 }
 
-void YOLO::stopTimer(){
+void YoloDetector::stopTimer(){
     end_ = std::chrono::steady_clock::now();
 }
 
-void YOLO::setCfgFile(const std::string &value)
+void YoloDetector::setCfgFile(const std::string &value)
 {
     settings_->setValue(CFG_FILE, QString::fromStdString(value));
 }
 
-void YOLO::setNamesFile(const std::string &value)
+void YoloDetector::setNamesFile(const std::string &value)
 {
     settings_->setValue(NAMES_FILE, QString::fromStdString(value));
 }
 
-void YOLO::setWeightsFile(const std::string &value)
+void YoloDetector::setWeightsFile(const std::string &value)
 {
     settings_->setValue(WEIGHTS_FILE, QString::fromStdString(value));
 }
 
-void YOLO::setInputFile(const std::string &value)
+void YoloDetector::setInputFile(const std::string &value)
 {
     settings_->setValue(INPUT_FILE, QString::fromStdString(value));
 }
 
-void YOLO::setDetectionWindow(DetectionWindow* detection_window) {
+void YoloDetector::setDetectionWindow(DetectionWindow* detection_window) {
     detection_window_ = detection_window;
 }
 
-void YOLO::setExitSignal()
+void YoloDetector::setExitSignal()
 {
     exit_signal_ = true;
 }
 
-std::string YOLO::getCfgFile() const
+std::string YoloDetector::getCfgFile() const
 {
     return settings_->value(CFG_FILE, CFG_FILE_DEFAULT_PATH).toString().toStdString();
 }
 
-std::string YOLO::getNamesFile() const
+std::string YoloDetector::getNamesFile() const
 {
     return settings_->value(NAMES_FILE, NAMES_FILE_DEFAULT_PATH).toString().toStdString();
 }
 
-std::string YOLO::getWeightsFile() const
+std::string YoloDetector::getWeightsFile() const
 {
     return settings_->value(WEIGHTS_FILE, WEIGHTS_FILE_DEFAULT_PATH ).toString().toStdString();
 }
 
-std::string YOLO::getInputFile() const
+std::string YoloDetector::getInputFile() const
 {
     return settings_->value(INPUT_FILE, INPUT_FILE_DEFAULT_PATH).toString().toStdString();
 }
 
-bool YOLO::hasExitSignal() const
+bool YoloDetector::hasExitSignal() const
 {
     return exit_signal_;
 }

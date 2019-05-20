@@ -20,17 +20,17 @@ CONFIG += c++11 static
 
 SOURCES += \
         src/main.cpp \
-        src/yolo.cpp \
         src/detectionwindow.cpp \
         src/mainwindow.cpp \
-        src/yoloclassclassifier.cpp
+    src/yolodetector.cpp \
+    src/yoloclassifier.cpp
 
 HEADERS += \
         include/yolo_v2_class.hpp \
-        include/yolo.h \
         include/detectionwindow.h \
         include/mainwindow.h \
-        include/yoloclassclassifier.h
+    include/yolodetector.h \
+    include/yoloclassifier.h
 
 FORMS += \
         ui/detectionwindow.ui \

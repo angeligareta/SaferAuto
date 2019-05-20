@@ -1,11 +1,11 @@
-#include "include/yoloclassclassifier.h"
+#include "include/yoloclassifier.h"
 
-YoloClassClassifier::YoloClassClassifier():
+YoloClassifier::YoloClassifier():
      // speed_limit_sign_classifier(SPEED_LIMIT_CLASSIFIER_NAMES, SPEED_LIMIT_CLASSIFIER_WEIGHTS),
      speed_limit_sign_labels_(getObjectNamesFromFile(SPEED_LIMIT_CLASSIFIER_NAMES)),
      classified_elements_(){}
 
-std::string YoloClassClassifier::classifyImage(std::string image_class_name, cv::Mat detected_element) {
+std::string YoloClassifier::classifyImage(std::string image_class_name, cv::Mat detected_element) {
     if (image_class_name.compare("prohibitory") == 0) {
         std::cout << "Inserting... " << image_class_name;
         //std::string detected_text = getDigits(detected_element);
@@ -19,17 +19,17 @@ std::string YoloClassClassifier::classifyImage(std::string image_class_name, cv:
     return image_class_name;
 }
 
-bool YoloClassClassifier::hasElementBeenClassified(unsigned int tracking_id) {
+bool YoloClassifier::hasElementBeenClassified(unsigned int tracking_id) {
     return (tracking_id > 0) && (classified_elements_.count(tracking_id) != 0);
 }
 
-std::string YoloClassClassifier::getElementClassification(unsigned int tracking_id) {
+std::string YoloClassifier::getElementClassification(unsigned int tracking_id) {
     return hasElementBeenClassified(tracking_id) ? classified_elements_.at(tracking_id) : "";
 }
 
 // Probé a detectarlo solo y si estaba en las labels devolverlo.
 // Probé a coger el nivel de precisión y descartarlo si no pasa un máximo, con todos los PageIteratorLevel distintos.
-std::string YoloClassClassifier::getDigits(cv::Mat image) {
+std::string YoloClassifier::getDigits(cv::Mat image) {
     // Create Tesseract object
     tesseract::TessBaseAPI *ocr = new tesseract::TessBaseAPI();
 
@@ -60,7 +60,7 @@ std::string YoloClassClassifier::getDigits(cv::Mat image) {
     return detected_text;
 }
 
-std::string YoloClassClassifier::extractIntegerWords(std::string str)
+std::string YoloClassifier::extractIntegerWords(std::string str)
 {
     std::string digits = "";
     for (char character : str) {

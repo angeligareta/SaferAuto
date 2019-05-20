@@ -19,7 +19,7 @@ const std::string SPEED_LIMIT_CLASSIFIER_WEIGHTS= "/models/weights/eresl/darknet
 const std::string SPEED_LIMIT_CLASSIFIER_CFG = "./models/cfg/eresl/darknet.cfg";
 
 
-class YoloClassClassifier
+class YoloClassifier
 {
 private:
     // Detector speed_limit_sign_classifier_;
@@ -30,7 +30,7 @@ private:
     std::string getDigits(cv::Mat image);
 
 public:
-    YoloClassClassifier();
+    YoloClassifier();
     std::string classifyImage(std::string image_class_name, cv::Mat img);
     bool hasElementBeenClassified(unsigned int tracking_id);
     std::string getElementClassification(unsigned int tracking_id);

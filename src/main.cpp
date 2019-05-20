@@ -1,6 +1,6 @@
 #include "include/detectionwindow.h"
 #include "include/mainwindow.h"
-#include "include/yolo.h"
+#include "include/yolodetector.h"
 
 #include <QApplication>
 

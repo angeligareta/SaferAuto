@@ -22,7 +22,7 @@
 #include "opencv2/videoio/videoio.hpp"
 #pragma comment(lib, "opencv_world320.lib")
 
-#include "yoloclassclassifier.h"
+#include "yoloclassifier.h"
 
 class DetectionWindow;
 
@@ -48,7 +48,7 @@ const float NMS_THRESHOLD = 0.02f;
  * @brief The YOLO class contains all the methods for detecting the input media by using the YOLO C++ API,
  * it draw boxes on the input and show the results in the Detection Window interface.
  */
-class YOLO {
+class YoloDetector {
 
 private:
     /**
@@ -71,7 +71,7 @@ private:
     /**
      * @brief yolo_class_classifier_ object contains methods for classifying an object subclass.
      */
-    YoloClassClassifier yolo_class_classifier_;
+    YoloClassifier yolo_class_classifier_;
 
     /**
      * @brief detection_window_ represents the view where all the result will be displayed.
@@ -97,9 +97,9 @@ public:
      * @param weightsFile
      * @param filename
      */
-    YOLO();
+    YoloDetector();
 
-    ~YOLO();
+    ~YoloDetector();
 
     /**
      * @brief drawBoxes adds a bounding box for every detected object in the frame.

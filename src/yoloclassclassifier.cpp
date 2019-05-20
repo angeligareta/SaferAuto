@@ -1,12 +1,13 @@
 #include "include/yoloclassclassifier.h"
 
 YoloClassClassifier::YoloClassClassifier():
-    //speed_limit_sign_classifier("/home/angeliton/Desktop/SaferAuto/models/cfg/eresl/darknet.cfg", "/home/angeliton/Desktop/SaferAuto/models/weights/eresl/darknet_5000.weights"),
-    speed_limit_sign_labels_(getObjectNamesFromFile("./models/cfg/ere/eresl.names"))
-{}
+     // speed_limit_sign_classifier(SPEED_LIMIT_CLASSIFIER_NAMES, SPEED_LIMIT_CLASSIFIER_WEIGHTS),
+     speed_limit_sign_labels_(getObjectNamesFromFile(SPEED_LIMIT_CLASSIFIER_NAMES)),
+     classified_elements_(){}
 
-std::string YoloClassClassifier::classifyImage(std::string class_name, cv::Mat detected_element) {
-    if (class_name.compare("prohibitory") == 0) {
+std::string YoloClassClassifier::classifyImage(std::string image_class_name, cv::Mat detected_element) {
+    if (image_class_name.compare("prohibitory") == 0) {
+        std::cout << "Inserting... " << image_class_name;
         //std::string detected_text = getDigits(detected_element);
         //return (detected_text != "") ? ("SL: " + detected_text) : class_name;
 
@@ -15,7 +16,15 @@ std::string YoloClassClassifier::classifyImage(std::string class_name, cv::Mat d
         // return speed_limit_sign_labels[speed_limit_class];
     }
 
-    return class_name;
+    return image_class_name;
+}
+
+bool YoloClassClassifier::hasElementBeenClassified(unsigned int tracking_id) {
+    return (tracking_id > 0) && (classified_elements_.count(tracking_id) != 0);
+}
+
+std::string YoloClassClassifier::getElementClassification(unsigned int tracking_id) {
+    return hasElementBeenClassified(tracking_id) ? classified_elements_.at(tracking_id) : "";
 }
 
 // Probé a detectarlo solo y si estaba en las labels devolverlo.

@@ -1,129 +1,137 @@
 #include "include/yolo.h"
 
 YOLO::YOLO():
-               tracked_elements(),
                yolo_class_classifier_(){}
 
-cv::Mat YOLO::drawBoxes(cv::Mat mat_img, std::vector<bbox_t> result_vec, std::vector<std::string> obj_names, DetectionWindow* window) {
-    for (auto &i : result_vec) {
-        cv::Rect detection_roi = cv::Rect(i.x, i.y, i.w, i.h);
-        cv::Mat detected_element = mat_img(detection_roi);
+YOLO::~YOLO() {
+    delete yolo_detector_;
+    delete detection_window_;
+}
 
+cv::Mat YOLO::drawBoxes(cv::Mat mat_img, const std::vector<bbox_t>& results, const std::vector<std::string>& element_names) {
+    for (auto &i : results) {
         std::string element_class;
-        // If the element has been tracked, do not classify again and return the classified class.
-        if (tracked_elements.count(i.track_id) != 0) {
-            element_class = tracked_elements.at(i.track_id);
+
+        if (yolo_class_classifier_.hasElementBeenClassified(i.track_id)) {
+            element_class = yolo_class_classifier_.getElementClassification(i.track_id);
         }
-        else { // Classify new tracked element
-            element_class = yolo_class_classifier_.classifyImage(obj_names[i.obj_id], detected_element);
-            if (element_class != obj_names[i.obj_id]) {
-                std::cout << "Inserting... " << element_class;
-                tracked_elements.insert(std::pair<int, std::string>(i.track_id, element_class));
-            }
+        else {
+            cv::Rect detection_roi = cv::Rect(static_cast<int>(i.x), static_cast<int>(i.y), static_cast<int>(i.w), static_cast<int>(i.h));
+            cv::Mat detected_element = mat_img(detection_roi);
+
+            element_class = yolo_class_classifier_.classifyImage(element_names[i.obj_id], detected_element);
+
+            // Show results
+            double normalized_probability = round(static_cast<double>(i.prob) * 1000.0)/10.0;
+            showResult(mat_img, detection_roi, detected_element, element_class, normalized_probability);
         }
-
-        std::cout << element_class << std::endl;
-
-        addDetectedElement(detected_element, element_class, window);
-        cv::rectangle(mat_img, detection_roi, BOX_COLOR, 3); // Add bounding box of object to img
-
-        // if(i.obj_id < obj_names.size())
-            // putText(mat_img, element_class, cv::Point2f(i.x, i.y - 10), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, BOX_COLOR);
-        // if(i.track_id > 0)
-            // putText(mat_img, std::to_string(i.track_id), cv::Point2f(i.x + 5, i.y + 15), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, BOX_COLOR);
     }
 
     return mat_img;
 }
 
-void YOLO::addDetectedElement(cv::Mat detected_element, std::string element_class, DetectionWindow* window) {
+void YOLO::showResult(cv::Mat mat_img, cv::Rect detection_roi, cv::Mat detected_element,
+                      const std::string element_class, const double normalized_probability) {
+    std::string info_text = "Last TS detected: " + element_class + ". Probability: " + std::to_string(normalized_probability) + "%";
+    detection_window_ -> displayDetection(info_text);
+    std::cout << info_text << std::endl;
+
+    //cv::Mat class_model_image = yolo_class_classifier_.getClassModelImage(element_class);
     cv::resize(detected_element, detected_element, cv::Size(120, 120)); // Zoom detected sign
     putText(detected_element, element_class, cv::Point(25, 110), cv::FONT_HERSHEY_DUPLEX, 1, BOX_COLOR);
-    window -> displayDetectedElement(detected_element);
+    detection_window_ -> displayDetectedElement(detected_element);
+
+    // Add bounding box of object to main image.
+    cv::rectangle(mat_img, detection_roi, BOX_COLOR, 3);
+
+    // If tracked set tracking id text to main image.
+    //if(i.track_id > 0)
+    //    putText(mat_img, std::to_string(i.track_id), cv::Point2f(i.x + 5, i.y + 15), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, BOX_COLOR);
 }
 
-void YOLO::showResult(std::vector<bbox_t> const result_vec, std::vector<std::string> const obj_names, DetectionWindow* window) {
-    for (auto &i : result_vec) {
-        if (obj_names.size() > i.obj_id) {
-            //std::cout << obj_names[i.obj_id] << " - ";
-        }
-        double normalized_prob = round(i.prob * 1000.0)/10.0;
-        std::string info_text = "Last TS detected: " + obj_names[i.obj_id] + ". Probability: " + std::to_string(normalized_prob) + "%";
-
-        window->displayDetection(info_text);
-    }
-}
-
-void YOLO::processVideoFile(Detector detector, std::vector<std::string> obj_names, DetectionWindow* window)
+void YOLO::processVideoFile(const std::vector<std::string>& element_names)
 {
     cv::Mat frame;
-    detector.nms = 0.02f;
-    const float kDetectionThreshold = 0.5f;
+    yolo_detector_->nms = NMS_THRESHOLD; // Set nont-maximum supression threshold for track_id
 
+    unsigned int frame_counter = 1;
     cv::VideoCapture cap(getInputFile());
     while(!hasExitSignal() && cap.isOpened()) {
-        cap >> frame; // Read new capture
+        // Read new capture
+        cap >> frame;
 
-        auto begin = std::chrono::steady_clock::now();
-        std::vector<bbox_t> result_vec = detector.detect(frame, kDetectionThreshold);
-        result_vec = detector.tracking_id(result_vec);
+        startTimer();
+        // Detect and track
+        std::vector<bbox_t> results = yolo_detector_->detect(frame, DETECTION_THRESHOLD);
+        results = yolo_detector_->tracking_id(results);
 
-        // preview_boxes_t large_preview(100, 150, false);
-        // large_preview.set(frame, result_vec);
-        // large_preview.draw(frame, true);
-
+        // Draw boxes and display image.
         try {
-            drawBoxes(frame, result_vec, obj_names, window);
-        } catch (...) {
-            // TODO: Correct
-        }
-        window -> displayImage(frame);
-        showResult(result_vec, obj_names, window);
-
-        auto end = std::chrono::steady_clock::now();
-        double elapsed_secs = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
-        int fps = static_cast<int>(1000.0 / elapsed_secs);
-        std::string fps_text = "CURRENT FPS: " + std::to_string(fps) + " fps";
-        window -> displayFPS(fps_text);
+            drawBoxes(frame, results, element_names);
+            detection_window_ -> displayImage(frame);
+        } catch (...) {}
+        stopTimer();
+        detection_window_ -> displayFPS("AVERAGE FPS: " + std::to_string(getCurrentFPS()) + " fps");
 
         // For not blocking UI
         QCoreApplication::processEvents();
+        frame_counter ++;
     }
 
     cap.release();
 }
 
-void YOLO::processImageFile(Detector detector, std::vector<std::string> obj_names, DetectionWindow* window) {
+void YOLO::processImageFile(const std::vector<std::string>& element_names) {
     cv::Mat mat_img = cv::imread(getInputFile());
-    std::vector<bbox_t> result_vec = detector.detect(mat_img);
+    std::vector<bbox_t> results = yolo_detector_->detect(mat_img, DETECTION_THRESHOLD);
 
-    drawBoxes(mat_img, result_vec, obj_names, window);
-    showResult(result_vec, obj_names, window);
-    window -> displayImage(mat_img);
+    drawBoxes(mat_img, results, element_names);
+    detection_window_ -> displayImage(mat_img);
 
+    // Give time to see the image before closing.
     std::this_thread::sleep_for(std::chrono::milliseconds(10000));
 }
 
-void YOLO::processInputFile(DetectionWindow* window)
+void YOLO::processInputFile()
 {
-    Detector detector(getCfgFile(), getWeightsFile());
-    auto obj_names = getObjectNamesFromFile(getNamesFile());
+    if (detection_window_ == nullptr) {
+        std::cerr << "Detection window not defined." << std::endl;
+    }
+    else {
+        yolo_detector_ = new Detector(getCfgFile(), getWeightsFile());
+        std::vector<std::string> element_names = getObjectNamesFromFile(getNamesFile());
 
-    try {
-        const std::string kFileExt = getInputFile().substr(getInputFile().find_last_of(".") + 1);
-        if (kFileExt == "avi" || kFileExt == "mp4" || kFileExt == "mjpg" || kFileExt == "mov") {	// Video file
-            processVideoFile(detector, obj_names, window);
+        try {
+            const std::string kFileExt = getInputFile().substr(getInputFile().find_last_of(".") + 1);
+            if (kFileExt == "avi" || kFileExt == "mp4" || kFileExt == "mjpg" || kFileExt == "mov") {	// Video file
+                processVideoFile(element_names);
+            }
+            else {	// Image file
+                processImageFile(element_names);
+            }
         }
-        else {	// Image file
-            processImageFile(detector, obj_names, window);
+        catch (std::exception &e) {
+            std::cerr << "exception: " << e.what() << "\n";;
+        }
+        catch (...) {
+            std::cerr << "unknown exception \n";
         }
     }
-    catch (std::exception &e) {
-        std::cerr << "exception: " << e.what() << "\n";;
-    }
-    catch (...) {
-        std::cerr << "unknown exception \n";
-    }
+}
+
+unsigned int YOLO::getCurrentFPS()
+{
+    double elapsed_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(end_ - begin_).count();
+    return static_cast<unsigned int>(1000.0 / elapsed_milliseconds);
+}
+
+
+void YOLO::startTimer() {
+    begin_ = std::chrono::steady_clock::now();
+}
+
+void YOLO::stopTimer(){
+    end_ = std::chrono::steady_clock::now();
 }
 
 void YOLO::setCfgFile(const std::string &value)
@@ -146,6 +154,15 @@ void YOLO::setInputFile(const std::string &value)
     settings_->setValue(INPUT_FILE, QString::fromStdString(value));
 }
 
+void YOLO::setDetectionWindow(DetectionWindow* detection_window) {
+    detection_window_ = detection_window;
+}
+
+void YOLO::setExitSignal()
+{
+    exit_signal_ = true;
+}
+
 std::string YOLO::getCfgFile() const
 {
     return settings_->value(CFG_FILE, CFG_FILE_DEFAULT_PATH).toString().toStdString();
@@ -166,12 +183,7 @@ std::string YOLO::getInputFile() const
     return settings_->value(INPUT_FILE, INPUT_FILE_DEFAULT_PATH).toString().toStdString();
 }
 
-void YOLO::setExitSignal()
-{
-    exit_signal_ = true;
-}
-
-bool YOLO::hasExitSignal()
+bool YOLO::hasExitSignal() const
 {
     return exit_signal_;
 }

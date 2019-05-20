@@ -41,6 +41,8 @@ const QString INPUT_FILE_DEFAULT_PATH = "./res/media/test-video-light.mp4";
 
 // Box color for the object detection boxes.
 const cv::Scalar BOX_COLOR = cv::Scalar(60, 160, 260);
+const float DETECTION_THRESHOLD = 0.65f;
+const float NMS_THRESHOLD = 0.02f;
 
 /**
  * @brief The YOLO class contains all the methods for detecting the input media by using the YOLO C++ API,
@@ -54,15 +56,37 @@ private:
      * and update it when the values are changed.
      */
     QSettings* settings_ = new QSettings(CONFIG_FILE, QSettings::NativeFormat);
+
     /**
      * @brief exit_signal_ is only activated when the user has pressed the canceled button in the detection window,
      * it stops the detection process.
      */
     bool exit_signal_ = false;
 
-    std::map<int, std::string> tracked_elements;
+    /**
+     * @brief yolo_detector_ represents the YOLO detector.
+     */
+    Detector* yolo_detector_ = nullptr;
 
+    /**
+     * @brief yolo_class_classifier_ object contains methods for classifying an object subclass.
+     */
     YoloClassClassifier yolo_class_classifier_;
+
+    /**
+     * @brief detection_window_ represents the view where all the result will be displayed.
+     */
+    DetectionWindow* detection_window_ = nullptr;
+
+    /**
+     * @brief begin_ stores the start of the timer.
+     */
+    std::chrono::_V2::steady_clock::time_point begin_;
+
+    /**
+     * @brief end_ stores the end of the timer.
+     */
+    std::chrono::_V2::steady_clock::time_point end_;
 
 public:
     /**
@@ -75,16 +99,18 @@ public:
      */
     YOLO();
 
+    ~YOLO();
+
     /**
      * @brief drawBoxes adds a bounding box for every detected object in the frame.
      *
      * @param mat_img
-     * @param result_vec
-     * @param obj_names
+     * @param results
+     * @param element_names
      * @param window
      * @return
      */
-    cv::Mat drawBoxes(cv::Mat mat_img, std::vector<bbox_t> result_vec, std::vector<std::string> obj_names, DetectionWindow* window);
+    cv::Mat drawBoxes(cv::Mat mat_img, const std::vector<bbox_t>& results, const std::vector<std::string>& element_names);
 
     /**
      * @brief addDetectedElement adds the detected element to the detection window for visualizing them separated.
@@ -93,16 +119,17 @@ public:
      * @param element_class
      * @param window
      */
-    void addDetectedElement(cv::Mat detected_element, std::string element_class, DetectionWindow* window);
+    void displayDetectedElement(cv::Mat detected_element, const std::string element_class);
 
     /**
      * @brief showResult sends the result to the detection window to display it..
      *
-     * @param result_vec
-     * @param obj_names
+     * @param results
+     * @param element_names
      * @param window
      */
-    void showResult(std::vector<bbox_t> const result_vec, std::vector<std::string> const obj_names, DetectionWindow *window);
+    void showResult(cv::Mat mat_img, cv::Rect detection_roi, cv::Mat detected_element,
+                    const std::string element_class, const double normalized_probability);
 
     /**
      * @brief processInputFile depending on the file received as input,
@@ -110,27 +137,44 @@ public:
      *
      * @param window
      */
-    void processInputFile(DetectionWindow *window);
+    void processInputFile();
 
     /**
      * @brief processVideoFile uses the YOLO C++ API to process a video, calculating the frames per second.
      *
      * @param detector
-     * @param obj_names
+     * @param element_names
      * @param window
      */
-    void processVideoFile(Detector detector, std::vector<std::string> obj_names, DetectionWindow *window);
+    void processVideoFile(const std::vector<std::string>& element_names);
 
     /**
      * @brief processImageFile uses the YOLO C++ API to simply process an image.
      *
      * @param detector
-     * @param obj_names
+     * @param element_names
      * @param window
      */
-    void processImageFile(Detector detector, std::vector<std::string> obj_names, DetectionWindow *window);
+    void processImageFile(const std::vector<std::string>& element_names);
 
-// GETTERS
+    /**
+     * @brief getCurrentFPS
+     * @param frame_counter
+     * @return
+     */
+    unsigned int getCurrentFPS();
+
+    /**
+     * @brief startTimer
+     */
+    void startTimer();
+
+    /**
+     * @brief stopTimer
+     */
+    void stopTimer();
+
+    // GETTERS
     /**
      * @brief Getter of configuration file for Darknet.
      * @return
@@ -155,7 +199,7 @@ public:
      */
     std::string getInputFile() const;
 
-// SETTERS
+    // SETTERS
     /**
      * @brief Setter of configuration file for Darknet.
      * @param value
@@ -188,10 +232,16 @@ public:
     void setExitSignal();
 
     /**
+     * @brief setDetectionWindow
+     * @param detection_window
+     */
+    void setDetectionWindow(DetectionWindow* detection_window);
+
+    /**
      * @brief hasExitSignal
      */
-    bool hasExitSignal();
-};
+    bool hasExitSignal() const;
+ };
 
 #endif // YOLO_H
 #include "detectionwindow.h"

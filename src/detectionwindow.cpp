@@ -38,7 +38,8 @@ DetectionWindow::~DetectionWindow()
 }
 
 void DetectionWindow::startDetection() {
-    yolo_.processInputFile(this);
+    yolo_.setDetectionWindow(this);
+    yolo_.processInputFile();
 }
 
 void DetectionWindow::showEvent(QShowEvent* event) {
@@ -78,7 +79,7 @@ void DetectionWindow::displayFPS(std::string fps_text) {
 
 void DetectionWindow::closeEvent(QCloseEvent *event)
 {
-    std::cout << "Thanks for using the SaferAuto detector!" << std::endl;
+    std::cout << "Thanks for using the SaferAuto detector." << std::endl;
 
     yolo_.setExitSignal();
     parent_->show();

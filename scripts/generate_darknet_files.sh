@@ -7,6 +7,7 @@ export LD_LIBRARY_PATH=/usr/local/cuda-10.0/lib64${LD_LIBRARY_PATH:+:${LD_LIBRAR
 
 # Activate GPU acceleration and OPENCV
 cd darknet
+git pull
 sed -i 's/GPU=.*/GPU=1/' Makefile
 sed -i 's/CUDNN=.*/CUDNN=1/' Makefile
 sed -i 's/CUDNN_HALF=.*/CUDNN_HALF=1/' Makefile

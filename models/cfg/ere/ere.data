@@ -1,5 +1,5 @@
-classes = 5
+classes = 8
 train = /home/angeliton/Desktop/SaferAuto/models/datasets/ere/train.txt
 valid = /home/angeliton/Desktop/SaferAuto/models/datasets/ere/test.txt
 names = /home/angeliton/Desktop/SaferAuto/models/datasets/ere/ere.names
-backup = /home/angeliton/Desktop/SaferAuto/models/weights/ere-tiny
+backup = /home/angeliton/Desktop/SaferAuto/models/weights/ere

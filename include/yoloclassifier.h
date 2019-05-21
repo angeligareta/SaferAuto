@@ -22,7 +22,7 @@ const std::string SPEED_LIMIT_CLASSIFIER_WEIGHTS= "/models/weights/eresl/darknet
 const std::string SPEED_LIMIT_CLASSIFIER_CFG = "./models/cfg/eresl/darknet.cfg";
 
 const std::string IMAGES_MODEL_DIR_PATH = "./res/categories_images/";
-const std::string IMAGES_MODEL_EXT = ".png";
+const std::string IMAGES_MODEL_EXT = ".jpg";
 
 
 class YoloClassifier

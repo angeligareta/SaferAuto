@@ -6,6 +6,9 @@ YoloClassifier::YoloClassifier():
      classified_elements_(){}
 
 std::string YoloClassifier::classifyImage(const std::string& image_class_name, const unsigned int tracking_id, cv::Mat detected_image) {
+    if (tracking_id > 0) {
+        classified_elements_.insert(std::pair<unsigned int, std::string>(tracking_id, image_class_name));
+    }
     // Disabled for speed
     /*if (image_class_name.compare("prohibitory") == 0) {
         std::string detected_text = getDigits(detected_image);
@@ -15,9 +18,6 @@ std::string YoloClassifier::classifyImage(const std::string& image_class_name, c
             std::cout << "Inserting... " << image_class_name;
             classified_elements_.insert(std::pair<unsigned int, std::string>(tracking_id, image_class_name));
             return  ("SL: " + detected_text);
-        }
-        else { // Detection not succesful
-            return image_class_name;
         }
     }*/
 

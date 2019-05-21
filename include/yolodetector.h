@@ -40,8 +40,8 @@ const QString WEIGHTS_FILE_DEFAULT_PATH = "./models/weights/edb-tiny/yolov3-tiny
 const QString INPUT_FILE_DEFAULT_PATH = "./res/media/test-video-light.mp4";
 
 // Box color for the object detection boxes.
-const cv::Scalar BOX_COLOR = cv::Scalar(60, 160, 260);
-const float DETECTION_THRESHOLD = 0.25f;
+const cv::Scalar BOX_COLOR = cv::Scalar(65, 105, 225);
+const float DETECTION_THRESHOLD = 0.35f;
 const float NMS_THRESHOLD = 0.02f;
 
 /**

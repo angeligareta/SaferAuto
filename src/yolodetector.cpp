@@ -10,16 +10,16 @@ YoloDetector::~YoloDetector() {
 
 cv::Mat YoloDetector::drawBoxes(cv::Mat mat_img, const std::vector<bbox_t>& results, const std::vector<std::string>& element_names) {
     for (auto &i : results) {
-        std::string element_class;
+        cv::Rect detection_roi = cv::Rect(static_cast<int>(i.x), static_cast<int>(i.y), static_cast<int>(i.w), static_cast<int>(i.h));
 
         if (yolo_class_classifier_.hasElementBeenClassified(i.track_id)) {
-            element_class = yolo_class_classifier_.getElementClassification(i.track_id);
+            // Add bounding box of object to main image.
+            cv::rectangle(mat_img, detection_roi, BOX_COLOR, 3);
         }
         else {
-            cv::Rect detection_roi = cv::Rect(static_cast<int>(i.x), static_cast<int>(i.y), static_cast<int>(i.w), static_cast<int>(i.h));
             cv::Mat detected_element = mat_img(detection_roi);
 
-            element_class = yolo_class_classifier_.classifyImage(element_names[i.obj_id], i.track_id, detected_element);
+            std::string element_class = yolo_class_classifier_.classifyImage(element_names[i.obj_id], i.track_id, detected_element);
 
             // Show results
             double normalized_probability = round(static_cast<double>(i.prob) * 1000.0)/10.0;
@@ -36,16 +36,11 @@ void YoloDetector::showResult(cv::Mat mat_img, cv::Rect detection_roi, cv::Mat d
 
     // Display model image
     cv::Mat class_model_image = yolo_class_classifier_.getModelImage(element_class, detected_element);
-    cv::resize(class_model_image, class_model_image, cv::Size(120, 120)); // Zoom detected sign
-    putText(class_model_image, element_class, cv::Point(25, 110), cv::FONT_HERSHEY_DUPLEX, 1, BOX_COLOR);
+    cv::resize(class_model_image, class_model_image, cv::Size(150, 150)); // Zoom detected sign
     detection_window_ -> displayDetectedElement(class_model_image, element_class, tracking_id, std::to_string(normalized_probability));
 
     // Add bounding box of object to main image.
     cv::rectangle(mat_img, detection_roi, BOX_COLOR, 3);
-
-    // If tracked set tracking id text to main image.
-    //if(i.track_id > 0)
-    //    putText(mat_img, std::to_string(i.track_id), cv::Point2f(i.x + 5, i.y + 15), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, BOX_COLOR);
 }
 
 void YoloDetector::processVideoFile(const std::vector<std::string>& element_names)
@@ -107,7 +102,7 @@ void YoloDetector::processInputFile()
             }
             else {	// Image file
                 processImageFile(element_names);
-            }
+            }            
         }
         catch (std::exception &e) {
             std::cerr << "exception: " << e.what() << "\n";;
@@ -116,6 +111,8 @@ void YoloDetector::processInputFile()
             std::cerr << "unknown exception \n";
         }
     }
+
+    detection_window_->close();
 }
 
 unsigned int YoloDetector::getCurrentFPS()

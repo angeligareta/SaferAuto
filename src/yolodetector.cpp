@@ -33,7 +33,7 @@ cv::Mat YoloDetector::drawBoxes(cv::Mat mat_img, const std::vector<bbox_t>& resu
 void YoloDetector::showResult(cv::Mat mat_img, cv::Rect detection_roi, cv::Mat detected_element,
                       const std::string element_class, const double normalized_probability) {
     std::string info_text = "Last TS detected: " + element_class + ". Probability: " + std::to_string(normalized_probability) + "%";
-    detection_window_ -> displayDetection(info_text);
+    detection_window_ -> displayDetectedElementOutput(info_text);
     std::cout << info_text << std::endl;
 
     //cv::Mat class_model_image = yolo_class_classifier_.getClassModelImage(element_class);
@@ -68,7 +68,7 @@ void YoloDetector::processVideoFile(const std::vector<std::string>& element_name
         // Draw boxes and display image.
         try {
             drawBoxes(frame, results, element_names);
-            detection_window_ -> displayImage(frame);
+            detection_window_ -> displayMainImage(frame);
         } catch (...) {}
         stopTimer();
         detection_window_ -> displayFPS("AVERAGE FPS: " + std::to_string(getCurrentFPS()) + " fps");
@@ -86,7 +86,7 @@ void YoloDetector::processImageFile(const std::vector<std::string>& element_name
     std::vector<bbox_t> results = yolo_detector_->detect(mat_img, DETECTION_THRESHOLD);
 
     drawBoxes(mat_img, results, element_names);
-    detection_window_ -> displayImage(mat_img);
+    detection_window_ -> displayMainImage(mat_img);
 
     // Give time to see the image before closing.
     std::this_thread::sleep_for(std::chrono::milliseconds(10000));

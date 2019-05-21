@@ -1,11 +1,11 @@
 #include "include/mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
+MainWindow::MainWindow() :
     ui(new Ui::MainWindow),
     yolo_()
 {
-    centerAndResize();
+    centerAndResizeWindow();
 
     ui->setupUi(this);
 
@@ -15,27 +15,36 @@ MainWindow::MainWindow(QWidget *parent) :
     setTagText(ui->mediaTag, QString::fromStdString(yolo_.getInputFile()));
 }
 
-void MainWindow::centerAndResize() {
-    QRect screen_geometry = QApplication::desktop() -> availableGeometry();
-    int screen_width = screen_geometry.width();
-    int screen_height = screen_geometry.height();
-
-    double reduction_proportion = 80.0 / 100.0;
-    int reducted_width = round(screen_width * reduction_proportion);
-    int reducted_height = screen_height * reduction_proportion;
-
-    int x_pos = screen_width / 2;
-    int y_pos = screen_height / 2;
-
-    this->resize(reducted_width, reducted_height);
-}
-
 MainWindow::~MainWindow()
 {
     delete ui;
 }
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::centerAndResizeWindow() {
+    QScreen* screen = QGuiApplication::primaryScreen();
+    QRect screen_geometry = screen -> geometry();
+    int screen_width = screen_geometry.width();
+    int screen_height = screen_geometry.height();
+
+    double reduction_proportion = 80.0 / 100.0;
+    int reducted_width = static_cast<int>(round(screen_width * reduction_proportion));
+    int reducted_height = static_cast<int>(screen_height * reduction_proportion);
+
+    this->resize(reducted_width, reducted_height);
+}
+
+std::string MainWindow::getFilePath(std::string current_file, std::string file_extension) {
+    return QFileDialog::getOpenFileName(this,
+                                        tr("Choose File"), QString::fromStdString(current_file),
+                                        tr(file_extension.c_str())).toStdString();
+}
+
+void MainWindow::setTagText(QLabel* tag, QString text) {
+    tag->setText((std::ifstream(text.toStdString()).good()) ? text : "");
+}
+
+
+void MainWindow::on_startButton_clicked()
 {
     DetectionWindow *window = new DetectionWindow(yolo_, this);
     window -> show();
@@ -80,14 +89,4 @@ void MainWindow::on_mediaButton_clicked()
 
     yolo_.setInputFile(file_name);
     ui->mediaTag->setText(QString::fromStdString(file_name));
-}
-
-std::string MainWindow::getFilePath(std::string current_file, std::string file_extension) {
-    return QFileDialog::getOpenFileName(this,
-                                        tr("Choose File"), QString::fromStdString(current_file),
-                                        tr(file_extension.c_str())).toStdString();
-}
-
-void MainWindow::setTagText(QLabel* tag, QString text) {
-    tag->setText((std::ifstream(text.toStdString()).good()) ? text : "");
 }

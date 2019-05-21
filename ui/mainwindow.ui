@@ -263,7 +263,7 @@
     </layout>
    </item>
    <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-    <widget class="QPushButton" name="pushButton">
+    <widget class="QPushButton" name="startButton">
      <property name="minimumSize">
       <size>
        <width>200</width>

@@ -38,16 +38,16 @@ std::string YoloClassifier::getDigits(cv::Mat image) {
     ocr->SetVariable("tessedit_char_whitelist", "0123456789");
 
     // Set image data
-    ocr->SetImage(image.data, image.cols, image.rows, 3, image.step);
+    ocr->SetImage(image.data, image.cols, image.rows, 3, static_cast<int>(image.step));
 
-    ocr->Recognize(0);
+    ocr->Recognize(nullptr);
     const float kMinConfidence = 50.00;
     std::string detected_text = "";
 
     // Get confidence from result
     tesseract::ResultIterator* ri = ocr->GetIterator();
     tesseract::PageIteratorLevel level = tesseract::RIL_BLOCK;
-    if (ri != 0) {
+    if (ri != nullptr) {
         std::string word = ri->GetUTF8Text(level);
         float confidence = ri->Confidence(level);
         //std::cout << word << std::endl;

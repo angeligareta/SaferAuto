@@ -35,9 +35,6 @@ public:
     bool hasElementBeenClassified(unsigned int tracking_id);
     std::string getElementClassification(unsigned int tracking_id);
 
-
-
-
 };
 
 #endif // YOLOCLASSCLASSIFIER_H

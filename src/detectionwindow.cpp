@@ -60,10 +60,10 @@ void DetectionWindow::displayFPS(std::string fps_text) {
 }
 
 QPixmap DetectionWindow::getPixmapImage(cv::Mat mat_img) {
-    // Converts from BG 2 RGB color format
+    //Converts from BG 2 RGB color format
     cv::cvtColor(mat_img, mat_img, CV_BGR2RGB);
 
-    // Converts the CV image into Qt standard format
+    //Converts the CV image into Qt standard format
     QImage img_display(static_cast<uchar*>(mat_img.data), mat_img.cols, mat_img.rows, static_cast<int>(mat_img.step), QImage::Format_RGB888);
     return QPixmap::fromImage(img_display);
 }

@@ -41,7 +41,7 @@ const QString INPUT_FILE_DEFAULT_PATH = "./res/media/test-video-light.mp4";
 
 // Box color for the object detection boxes.
 const cv::Scalar BOX_COLOR = cv::Scalar(60, 160, 260);
-const float DETECTION_THRESHOLD = 0.65f;
+const float DETECTION_THRESHOLD = 0.25f;
 const float NMS_THRESHOLD = 0.02f;
 
 /**

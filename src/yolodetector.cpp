@@ -19,7 +19,7 @@ cv::Mat YoloDetector::drawBoxes(cv::Mat mat_img, const std::vector<bbox_t>& resu
             cv::Rect detection_roi = cv::Rect(static_cast<int>(i.x), static_cast<int>(i.y), static_cast<int>(i.w), static_cast<int>(i.h));
             cv::Mat detected_element = mat_img(detection_roi);
 
-            element_class = yolo_class_classifier_.classifyImage(element_names[i.obj_id], detected_element);
+            element_class = yolo_class_classifier_.classifyImage(element_names[i.obj_id], i.track_id, detected_element);
 
             // Show results
             double normalized_probability = round(static_cast<double>(i.prob) * 1000.0)/10.0;
@@ -36,10 +36,11 @@ void YoloDetector::showResult(cv::Mat mat_img, cv::Rect detection_roi, cv::Mat d
     detection_window_ -> displayDetectedElementOutput(info_text);
     std::cout << info_text << std::endl;
 
-    //cv::Mat class_model_image = yolo_class_classifier_.getClassModelImage(element_class);
-    cv::resize(detected_element, detected_element, cv::Size(120, 120)); // Zoom detected sign
-    putText(detected_element, element_class, cv::Point(25, 110), cv::FONT_HERSHEY_DUPLEX, 1, BOX_COLOR);
-    detection_window_ -> displayDetectedElement(detected_element);
+    // Display model image
+    cv::Mat class_model_image = yolo_class_classifier_.getModelImage(element_class, detected_element);
+    cv::resize(class_model_image, class_model_image, cv::Size(120, 120)); // Zoom detected sign
+    putText(class_model_image, element_class, cv::Point(25, 110), cv::FONT_HERSHEY_DUPLEX, 1, BOX_COLOR);
+    detection_window_ -> displayDetectedElement(class_model_image);
 
     // Add bounding box of object to main image.
     cv::rectangle(mat_img, detection_roi, BOX_COLOR, 3);

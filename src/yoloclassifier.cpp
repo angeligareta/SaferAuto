@@ -5,18 +5,39 @@ YoloClassifier::YoloClassifier():
      speed_limit_sign_labels_(getObjectNamesFromFile(SPEED_LIMIT_CLASSIFIER_NAMES)),
      classified_elements_(){}
 
-std::string YoloClassifier::classifyImage(std::string image_class_name, cv::Mat detected_element) {
+std::string YoloClassifier::classifyImage(const std::string& image_class_name, const unsigned int tracking_id, cv::Mat detected_image) {
     if (image_class_name.compare("prohibitory") == 0) {
-        std::cout << "Inserting... " << image_class_name;
-        //std::string detected_text = getDigits(detected_element);
-        //return (detected_text != "") ? ("SL: " + detected_text) : class_name;
+        std::string detected_text = getDigits(detected_image);
 
-        // Classifier method.
-        // int speed_limit_class = speed_limit_sign_classifier.classify_image(detected_element, speed_limit_sign_labels.size());
-        // return speed_limit_sign_labels[speed_limit_class];
+        // If detection succesfuull, clasify element
+        if (detected_text == "") {
+            std::cout << "Inserting... " << image_class_name;
+            classified_elements_.insert(std::pair<unsigned int, std::string>(tracking_id, image_class_name));
+            return  ("SL: " + detected_text);
+        }
+        else { // Detection not succesful
+            return image_class_name;
+        }
     }
 
     return image_class_name;
+}
+
+cv::Mat YoloClassifier::getModelImage(const std::string& image_class_name, cv::Mat detected_image) {
+    std::string model_image_file_path = getModelImageFilePath(image_class_name);
+
+    // If model file exists return it
+    if (std::ifstream(model_image_file_path).good()) {
+        return cv::imread(model_image_file_path);
+    }
+    else {
+        std::cerr << "File " + model_image_file_path + " does not exist.";
+        return detected_image;
+    }
+}
+
+std::string YoloClassifier::getModelImageFilePath(const std::string& image_class_name) {
+    return IMAGES_MODEL_DIR_PATH + image_class_name + IMAGES_MODEL_EXT;
 }
 
 bool YoloClassifier::hasElementBeenClassified(unsigned int tracking_id) {
@@ -60,7 +81,7 @@ std::string YoloClassifier::getDigits(cv::Mat image) {
     return detected_text;
 }
 
-std::string YoloClassifier::extractIntegerWords(std::string str)
+std::string YoloClassifier::extractIntegerWords(const std::string& str)
 {
     std::string digits = "";
     for (char character : str) {

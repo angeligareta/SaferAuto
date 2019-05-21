@@ -1,12 +1,15 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QList>
+#include <QLabel>
 #include <QDialog>
 #include <QCloseEvent>
 #include <QScreen>
 #include <QTimer> // For singleshot event
 
 #include <iostream>
+#include <cctype> // toupper
 
 // OpenCV for cv::Mat
 #include <opencv2/opencv.hpp>
@@ -17,6 +20,12 @@ namespace Ui {
 }
 
 #include "yolodetector.h"
+
+struct DetectedElement {
+    QLabel* class_name;
+    QLabel* image;
+    QLabel* probability;
+};
 
 /**
  * @brief The DetectionWindow class displays a view for the detection model. It includes methods
@@ -29,15 +38,17 @@ class DetectionWindow : public QDialog
 private:
     Ui::DetectionWindow* ui_;
     YoloDetector yolo_;
+    QList<DetectedElement> detectedElementsLabelList;
     QWidget* parent_;
+
+    int lastDetectedIndex = 0;
 
 public:
     DetectionWindow(YoloDetector yolo, QWidget *parent = nullptr);
     ~DetectionWindow();
 
     void displayMainImage(cv::Mat mat_img);
-    void displayDetectedElement(cv::Mat mat_img);
-    void displayDetectedElementOutput(std::string info_text);
+    void displayDetectedElement(cv::Mat mat_img, std::string element_class, unsigned int tracking_id, std::string probability);
     void displayFPS(std::string fps_text);
 
     QPixmap getPixmapImage(cv::Mat mat_img);

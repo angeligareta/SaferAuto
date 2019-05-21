@@ -4,6 +4,7 @@
 DetectionWindow::DetectionWindow(YoloDetector yolo, QWidget *parent) :
                                                                        ui_(new Ui::DetectionWindow),
                                                                        yolo_(yolo),
+                                                                       detectedElementsLabelList(QList<DetectedElement>()),
                                                                        parent_(parent)
 {
     QScreen* screen = QGuiApplication::primaryScreen();
@@ -16,13 +17,19 @@ DetectionWindow::DetectionWindow(YoloDetector yolo, QWidget *parent) :
     int reducted_height = static_cast<int>(screen_height * reduction_proportion);
 
     this->resize(reducted_width, reducted_height);
-
     ui_->setupUi(this);
 
-    ui_->detectiondisplay->setAlignment(Qt::AlignCenter);
-    ui_->detectionoutput->setAlignment(Qt::AlignCenter);
-    ui_->fpsoutput->setAlignment(Qt::AlignCenter);
-    ui_->detectedElements->setAlignment(Qt::AlignCenter);
+    DetectedElement detectedElement1 = {ui_->detectedElement1ClassName, ui_->detectedElement1Image, ui_->detectedElement1Probability};
+    DetectedElement detectedElement2 = {ui_->detectedElement2ClassName, ui_->detectedElement2Image, ui_->detectedElement2Probability};
+    DetectedElement detectedElement3 = {ui_->detectedElement3ClassName, ui_->detectedElement3Image, ui_->detectedElement3Probability};
+    DetectedElement detectedElement4 = {ui_->detectedElement4ClassName, ui_->detectedElement4Image, ui_->detectedElement4Probability};
+    DetectedElement detectedElement5 = {ui_->detectedElement5ClassName, ui_->detectedElement5Image, ui_->detectedElement5Probability};
+
+    detectedElementsLabelList << detectedElement1;
+    detectedElementsLabelList << detectedElement2;
+    detectedElementsLabelList << detectedElement3;
+    detectedElementsLabelList << detectedElement4;
+    detectedElementsLabelList << detectedElement5;
 }
 
 DetectionWindow::~DetectionWindow()
@@ -41,16 +48,24 @@ void DetectionWindow::displayMainImage(cv::Mat mat_img) {
     ui_->detectiondisplay->repaint();
 }
 
-void DetectionWindow::displayDetectedElement(cv::Mat mat_img) {
-    ui_->detectedElements->setPixmap(getPixmapImage(mat_img));
-    ui_->detectedElements->update();
-    ui_->detectedElements->repaint();
-}
+void DetectionWindow::displayDetectedElement(cv::Mat mat_img, std::string element_class, unsigned int tracking_id, std::string probability) {
+    DetectedElement detectedElement = detectedElementsLabelList.at(lastDetectedIndex);
 
-void DetectionWindow::displayDetectedElementOutput(std::string info_text) {
-    ui_->detectionoutput->setText(QString(info_text.c_str()));
-    ui_->detectionoutput->update();
-    ui_->detectionoutput->repaint();
+    detectedElement.image -> setPixmap(getPixmapImage(mat_img));
+    detectedElement.image -> update();
+    detectedElement.image -> repaint();
+
+    element_class[0] = static_cast<char>(toupper(element_class[0]));
+    std::string element_title = std::to_string(tracking_id) + ": " + element_class;
+    detectedElement.class_name -> setText(QString(element_title.c_str()));
+    detectedElement.class_name -> update();
+    detectedElement.class_name -> repaint();
+
+    detectedElement.probability -> setText(QString(probability.c_str()));
+    detectedElement.probability -> update();
+    detectedElement.probability -> repaint();
+
+    lastDetectedIndex = (lastDetectedIndex + 1) % detectedElementsLabelList.size();
 }
 
 void DetectionWindow::displayFPS(std::string fps_text) {

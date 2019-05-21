@@ -6,7 +6,8 @@ YoloClassifier::YoloClassifier():
      classified_elements_(){}
 
 std::string YoloClassifier::classifyImage(const std::string& image_class_name, const unsigned int tracking_id, cv::Mat detected_image) {
-    if (image_class_name.compare("prohibitory") == 0) {
+    // Disabled for speed
+    /*if (image_class_name.compare("prohibitory") == 0) {
         std::string detected_text = getDigits(detected_image);
 
         // If detection succesfuull, clasify element
@@ -18,7 +19,7 @@ std::string YoloClassifier::classifyImage(const std::string& image_class_name, c
         else { // Detection not succesful
             return image_class_name;
         }
-    }
+    }*/
 
     return image_class_name;
 }
@@ -55,7 +56,7 @@ std::string YoloClassifier::getDigits(cv::Mat image) {
     tesseract::TessBaseAPI *ocr = new tesseract::TessBaseAPI();
 
     // Initialize tesseract to use English (eng) and the LSTM OCR engine.
-    ocr->Init("./lib/tesseract-api/tessdata", "eng", tesseract::OEM_DEFAULT);
+    ocr->Init("./lib/tesseract-api/tessdata", "eng", tesseract::OEM_LSTM_ONLY);
     ocr->SetVariable("tessedit_char_whitelist", "0123456789");
 
     // Set image data

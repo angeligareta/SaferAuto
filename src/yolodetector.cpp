@@ -23,7 +23,7 @@ cv::Mat YoloDetector::drawBoxes(cv::Mat mat_img, const std::vector<bbox_t>& resu
 
             // Show results
             double normalized_probability = round(static_cast<double>(i.prob) * 1000.0)/10.0;
-            showResult(mat_img, detection_roi, detected_element, element_class, normalized_probability);
+            showResult(mat_img, detection_roi, detected_element, element_class, i.track_id, normalized_probability);
         }
     }
 
@@ -31,16 +31,14 @@ cv::Mat YoloDetector::drawBoxes(cv::Mat mat_img, const std::vector<bbox_t>& resu
 }
 
 void YoloDetector::showResult(cv::Mat mat_img, cv::Rect detection_roi, cv::Mat detected_element,
-                      const std::string element_class, const double normalized_probability) {
-    std::string info_text = "Last TS detected: " + element_class + ". Probability: " + std::to_string(normalized_probability) + "%";
-    detection_window_ -> displayDetectedElementOutput(info_text);
-    std::cout << info_text << std::endl;
+                              const std::string element_class, unsigned int tracking_id, const double normalized_probability) {
+    std::cout <<  "Last TS detected: " + element_class + ". Probability: " + std::to_string(normalized_probability) + "%" << std::endl;
 
     // Display model image
     cv::Mat class_model_image = yolo_class_classifier_.getModelImage(element_class, detected_element);
     cv::resize(class_model_image, class_model_image, cv::Size(120, 120)); // Zoom detected sign
     putText(class_model_image, element_class, cv::Point(25, 110), cv::FONT_HERSHEY_DUPLEX, 1, BOX_COLOR);
-    detection_window_ -> displayDetectedElement(class_model_image);
+    detection_window_ -> displayDetectedElement(class_model_image, element_class, tracking_id, std::to_string(normalized_probability));
 
     // Add bounding box of object to main image.
     cv::rectangle(mat_img, detection_roi, BOX_COLOR, 3);

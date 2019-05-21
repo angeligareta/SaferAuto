@@ -129,7 +129,7 @@ public:
      * @param window
      */
     void showResult(cv::Mat mat_img, cv::Rect detection_roi, cv::Mat detected_element,
-                    const std::string element_class, const double normalized_probability);
+                    const std::string element_class, unsigned int tracking_id, const double normalized_probability);
 
     /**
      * @brief processInputFile depending on the file received as input,

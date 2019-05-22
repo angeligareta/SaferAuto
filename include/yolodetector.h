@@ -41,7 +41,7 @@ const QString INPUT_FILE_DEFAULT_PATH = "./res/media/test-video-light.mp4";
 
 // Box color for the object detection boxes.
 const cv::Scalar BOX_COLOR = cv::Scalar(65, 105, 225);
-const float DETECTION_THRESHOLD = 0.35f;
+const float DETECTION_THRESHOLD = 0.45f;
 const float NMS_THRESHOLD = 0.02f;
 
 /**
@@ -51,6 +51,7 @@ const float NMS_THRESHOLD = 0.02f;
 class YoloDetector {
 
 private:
+
     /**
      * @brief settings_ saves the current cfg, names, weights and input file paths in a configuration file
      * and update it when the values are changed.
@@ -241,7 +242,8 @@ public:
      * @brief hasExitSignal
      */
     bool hasExitSignal() const;
- };
+    YoloClassifier getYoloClasClassifier() const;
+};
 
 #endif // YOLO_H
 #include "detectionwindow.h"

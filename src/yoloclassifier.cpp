@@ -2,66 +2,13 @@
 
 YoloClassifier::YoloClassifier():
      // speed_limit_sign_classifier(SPEED_LIMIT_CLASSIFIER_NAMES, SPEED_LIMIT_CLASSIFIER_WEIGHTS),
-     speed_limit_sign_classifier_(new QProcess),
-     classified_elements_()
-{
-    connect(speed_limit_sign_classifier_, SIGNAL( readyRead() ), this, SLOT(readNewProgramOutput()));
-    connect(speed_limit_sign_classifier_, SIGNAL(finished (int, QProcess::ExitStatus)), this, SLOT(programFinished()));
-
-    speed_limit_sign_classifier_ -> start(SPEED_LIMIT_CLASSIFIER_PROGRAM, SPEED_LIMIT_CLASSIFIER_PROGRAM_ARGS);
-    if (speed_limit_sign_classifier_->waitForStarted()) {
-        std::cout << "SL Classifier process started." << std::endl;
-        if (speed_limit_sign_classifier_->waitForReadyRead()) {
-            qDebug() << "SL CLASSIFIER PROGRAM OUTPUT" << speed_limit_sign_classifier_ -> readAll();
-        }
-        //speed_limit_sign_classifier_ -> classifySpeedLimitImage("Hola\n\r");
-    }
-    else {
-        std::cout << "SL Classifier process did not start." << std::endl;
-    }
-}
-
-YoloClassifier::YoloClassifier(const YoloClassifier& yoloClassifier) {
-    this->classified_elements_ = yoloClassifier.classified_elements_;
-    this->speed_limit_sign_classifier_ = yoloClassifier.speed_limit_sign_classifier_;
-}
-
-YoloClassifier::~YoloClassifier()
-{
-    std::cerr << "Closing YOLO classifier finished.";
-}
-
-void YoloClassifier::readNewProgramOutput() {
-    //qDebug() << "SL CLASSIFIER PROGRAM OUTPUT" << speed_limit_sign_classifier_ -> readAll();
-}
-
-void YoloClassifier::programFinished() {
-    qDebug() << "PROGRAM YOLO CLASSIFIER FINISHED" << speed_limit_sign_classifier_->exitCode();
-    qDebug() << "SL CLASSIFIER PROGRAM OUTPUT" << speed_limit_sign_classifier_ -> readAllStandardError();
-}
-
-std::string YoloClassifier::classifySpeedLimitImage(const std::string &image_class_name, const cv::Mat& detected_image) {
-    std::cout << "Classifyinng speed limit sign";
-
-    std::string filename = image_class_name + ".jpg";
-    cv::imwrite(filename, detected_image);
-    speed_limit_sign_classifier_ -> write((filename + "\n").c_str());
-    if (speed_limit_sign_classifier_->waitForReadyRead()) {
-        QString output(speed_limit_sign_classifier_ -> readAllStandardOutput());
-        QStringList detectedSignal = output.split("\n")[2].split(": ");
-
-        std::string detected_image = detectedSignal[0].toStdString();
-        double probability = detectedSignal[1].toDouble();
-        if (probability > 0.9) {
-            std::cout << "Probability of " << detected_image << ": " << probability;
-            return detected_image;
-        }
-    }
-
-    return image_class_name;
-}
+     speed_limit_sign_labels_(getObjectNamesFromFile(SPEED_LIMIT_CLASSIFIER_NAMES)),
+     classified_elements_(){}
 
 std::string YoloClassifier::classifyImage(const std::string& image_class_name, const unsigned int tracking_id, cv::Mat detected_image) {
+    if (tracking_id > 0) {
+        classified_elements_.insert(std::pair<unsigned int, std::string>(tracking_id, image_class_name));
+    }
     // Disabled for speed
     /*if (image_class_name.compare("prohibitory") == 0) {
         std::string detected_text = getDigits(detected_image);
@@ -73,14 +20,6 @@ std::string YoloClassifier::classifyImage(const std::string& image_class_name, c
             return  ("SL: " + detected_text);
         }
     }*/
-    if (image_class_name == "prohibitory") {
-        std::string detected_text = classifySpeedLimitImage(image_class_name, detected_image);
-        if (detected_text != "") {
-            std::cout << "Inserting... " << image_class_name;
-            classified_elements_.insert(std::pair<unsigned int, std::string>(tracking_id, image_class_name));
-            return  (detected_text);
-        }
-    }
 
     return image_class_name;
 }

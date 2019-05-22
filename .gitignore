@@ -451,7 +451,8 @@ lib*/
 build*/
 
 # Demo videos
-res/demo-videos/test-video-light-2.mp4
+res/demo/video/test-video-light-2.mp4
+res/demo/video/test-video-light-3.mp4
 
 # VS CODE
 .vscode

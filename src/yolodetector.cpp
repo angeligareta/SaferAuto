@@ -18,7 +18,7 @@ cv::Mat YoloDetector::drawBoxes(cv::Mat mat_img, const std::vector<bbox_t>& resu
         }
         else {
             cv::Mat detected_element = mat_img(detection_roi);
-
+            cv::resize(detected_element, detected_element, cv::Size(256, 256)); // Zoom detected sign
             std::string element_class = yolo_class_classifier_.classifyImage(element_names[i.obj_id], i.track_id, detected_element);
 
             // Show results

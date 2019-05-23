@@ -1,14 +1,67 @@
 #include "include/yoloclassifier.h"
 
 YoloClassifier::YoloClassifier():
-     // speed_limit_sign_classifier(SPEED_LIMIT_CLASSIFIER_NAMES, SPEED_LIMIT_CLASSIFIER_WEIGHTS),
-     speed_limit_sign_labels_(getObjectNamesFromFile(SPEED_LIMIT_CLASSIFIER_NAMES)),
-     classified_elements_(){}
+                                   speed_limit_sign_classifier(new QProcess),
+                                   classified_elements_()
+{
+    connect(speed_limit_sign_classifier, SIGNAL(finished(int , QProcess::ExitStatus )), this, SLOT(programFinished()));
+
+    speed_limit_sign_classifier -> setWorkingDirectory(SPEED_LIMIT_CLASSIFIER_WD);
+    speed_limit_sign_classifier -> start(SPEED_LIMIT_CLASSIFIER_PROGRAM, SPEED_LIMIT_CLASSIFIER_PROGRAM_ARGS);
+
+    if (speed_limit_sign_classifier -> waitForStarted()) {
+        std::cout << "YOLO CLASSIFIER PROGRAM started!" << std::endl;
+        if (speed_limit_sign_classifier -> waitForReadyRead()) {
+            qDebug() << speed_limit_sign_classifier -> readAllStandardOutput();
+        }
+    }
+    else {
+        std::cout << "YOLO CLASSIFIER PROGRAM did not start" << std::endl;
+    }
+}
+
+YoloClassifier::YoloClassifier(const YoloClassifier& yoloClassifier) {
+    this->classified_elements_ = yoloClassifier.classified_elements_;
+    this->speed_limit_sign_classifier = yoloClassifier.speed_limit_sign_classifier;
+}
+
+YoloClassifier::~YoloClassifier() {
+
+}
+
+void YoloClassifier::programFinished() {
+    qDebug() << "YOLO CLASSIFIER PROGRAM FINISHED. Last output:" << speed_limit_sign_classifier->readAllStandardError();
+}
+
+std::string YoloClassifier::classifySpeedLimitImage(const std::string &image_class_name, cv::Mat detected_image) {
+    qDebug() << speed_limit_sign_classifier->readAll();
+
+    std::string filename = image_class_name + ".ppm";
+    cv::imwrite(filename, detected_image);
+
+    speed_limit_sign_classifier->write(QString::fromStdString("../" + filename + "\n").toLatin1());
+    if (speed_limit_sign_classifier->waitForReadyRead()) {
+        QString output(speed_limit_sign_classifier->readAllStandardOutput());
+        QString detectedSignalRaw = output.split("\n")[0];
+        qDebug() << output;
+
+        if (detectedSignalRaw.contains("-")) {
+            QStringList detectedSignal = detectedSignalRaw.split("- ");
+            std::string detected_class_name = detectedSignal[0].toStdString();
+            double probability = detectedSignal[1].toDouble();
+
+            if (probability > 0.85) {
+                std::cout << "Detected:" << detected_class_name << " | Prob: " << probability;
+                return detected_class_name;
+            }
+        }
+    }
+
+    return image_class_name;
+}
 
 std::string YoloClassifier::classifyImage(const std::string& image_class_name, const unsigned int tracking_id, cv::Mat detected_image) {
-    if (tracking_id > 0) {
-        classified_elements_.insert(std::pair<unsigned int, std::string>(tracking_id, image_class_name));
-    }
+
     // Disabled for speed
     /*if (image_class_name.compare("prohibitory") == 0) {
         std::string detected_text = getDigits(detected_image);
@@ -20,6 +73,16 @@ std::string YoloClassifier::classifyImage(const std::string& image_class_name, c
             return  ("SL: " + detected_text);
         }
     }*/
+    if (image_class_name == "prohibitory") {
+        std::string detected_class_name = classifySpeedLimitImage(image_class_name, detected_image);
+
+        if (detected_class_name != image_class_name) {
+            if (tracking_id > 0) {
+                classified_elements_.insert(std::pair<unsigned int, std::string>(tracking_id, detected_class_name));
+            }
+            return detected_class_name;
+        }
+    }
 
     return image_class_name;
 }
@@ -51,7 +114,7 @@ std::string YoloClassifier::getElementClassification(unsigned int tracking_id) {
 
 // Probé a detectarlo solo y si estaba en las labels devolverlo.
 // Probé a coger el nivel de precisión y descartarlo si no pasa un máximo, con todos los PageIteratorLevel distintos.
-std::string YoloClassifier::getDigits(cv::Mat image) {
+/*std::string YoloClassifier::getDigits(cv::Mat image) {
     // Create Tesseract object
     tesseract::TessBaseAPI *ocr = new tesseract::TessBaseAPI();
 
@@ -80,7 +143,7 @@ std::string YoloClassifier::getDigits(cv::Mat image) {
     }
 
     return detected_text;
-}
+}*/
 
 std::string YoloClassifier::extractIntegerWords(const std::string& str)
 {

@@ -1,7 +1,7 @@
-classes=8
+classes = 10
 train = /home/angeliton/Desktop/SaferAuto/models/datasets/eresl/train.list
 valid = /home/angeliton/Desktop/SaferAuto/models/datasets/eresl/test.list
 test = /home/angeliton/Desktop/SaferAuto/models/datasets/eresl/test.list
 labels = /home/angeliton/Desktop/SaferAuto/models/cfg/eresl/labels.txt
 backup = /home/angeliton/Desktop/SaferAuto/models/weights/eresl
-top=2
+top=1

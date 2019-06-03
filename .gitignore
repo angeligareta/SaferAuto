@@ -452,6 +452,7 @@ build*/
 
 # Demo videos
 res/demo/video/test-video-light-2.mp4
+res/demo/video/test-video-light-2.cropped.mp4
 res/demo/video/test-video-light-3.mp4
 
 # VS CODE

@@ -49,7 +49,8 @@ void DetectionWindow::displayMainImage(cv::Mat mat_img) {
 }
 
 void DetectionWindow::displayDetectedElement(cv::Mat mat_img, std::string element_class, unsigned int tracking_id, std::string probability) {
-    DetectedElement detectedElement = detectedElementsLabelList.at(lastDetectedIndex);
+    unsigned int index = (tracking_id - 1) % detectedElementsLabelList.size();
+    DetectedElement detectedElement = detectedElementsLabelList.at(static_cast<int>(index));
 
     detectedElement.image -> setPixmap(getPixmapImage(mat_img));
     detectedElement.image -> update();
@@ -65,7 +66,7 @@ void DetectionWindow::displayDetectedElement(cv::Mat mat_img, std::string elemen
     detectedElement.probability -> update();
     detectedElement.probability -> repaint();
 
-    lastDetectedIndex = (lastDetectedIndex + 1) % detectedElementsLabelList.size();
+    //lastDetectedIndex = (tracking_id) % detectedElementsLabelList.size();
 }
 
 void DetectionWindow::displayFPS(std::string fps_text) {

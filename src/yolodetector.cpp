@@ -10,13 +10,13 @@ YoloDetector::~YoloDetector() {
 
 cv::Mat YoloDetector::drawBoxes(cv::Mat mat_img, const std::vector<bbox_t>& results, const std::vector<std::string>& element_names) {
     for (auto &i : results) {
-        cv::Rect detection_roi = cv::Rect(static_cast<int>(i.x), static_cast<int>(i.y), static_cast<int>(i.w), static_cast<int>(i.h));
-
         if (yolo_class_classifier_.hasElementBeenClassified(i.track_id)) {
             // Add bounding box of object to main image.
+            cv::Rect detection_roi = cv::Rect(static_cast<int>(i.x), static_cast<int>(i.y), static_cast<int>(i.w), static_cast<int>(i.h));
             cv::rectangle(mat_img, detection_roi, BOX_COLOR, 3);
         }
         else {
+            cv::Rect detection_roi = cv::Rect(static_cast<int>(i.x) - 4, static_cast<int>(i.y) - 4, static_cast<int>(i.w) + 8, static_cast<int>(i.h) + 8);
             cv::Mat detected_element = mat_img(detection_roi);
             cv::resize(detected_element, detected_element, cv::Size(256, 256)); // Zoom detected sign
             std::string element_class = yolo_class_classifier_.classifyImage(element_names[i.obj_id], i.track_id, detected_element);

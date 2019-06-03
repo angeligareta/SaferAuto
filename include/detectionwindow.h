@@ -25,6 +25,7 @@ struct DetectedElement {
     QLabel* class_name;
     QLabel* image;
     QLabel* probability;
+    unsigned int tracking_id;
 };
 
 /**

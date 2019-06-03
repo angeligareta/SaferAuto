@@ -20,6 +20,7 @@
 #include <opencv/cv.hpp> // For cv::imread
 
 // Classifier constants
+const double SPEED_LIMIT_PRECISSION = 0.70;
 const QString SPEED_LIMIT_CLASSIFIER_CFG = "../models/cfg/eresl/darknet.cfg";
 const QString SPEED_LIMIT_CLASSIFIER_WEIGHTS= "../models/weights/eresl/darknet_last.weights";
 const QString SPEED_LIMIT_CLASSIFIER_DATA = "../models/cfg/eresl/eresl.data";

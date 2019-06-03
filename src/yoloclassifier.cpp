@@ -30,7 +30,7 @@ YoloClassifier::~YoloClassifier() {
 }
 
 void YoloClassifier::programFinished() {
-    qDebug() << "YOLO CLASSIFIER PROGRAM FINISHED. Last output:" << speed_limit_sign_classifier->readAllStandardError();
+    qDebug() << "YOLO CLASSIFIER PROGRAM FINISHED. Last output:" << speed_limit_sign_classifier -> readAllStandardError();
 }
 
 std::string YoloClassifier::classifySpeedLimitImage(const std::string &image_class_name, cv::Mat detected_image) {
@@ -46,11 +46,11 @@ std::string YoloClassifier::classifySpeedLimitImage(const std::string &image_cla
         qDebug() << output;
 
         if (detectedSignalRaw.contains("-")) {
-            QStringList detectedSignal = detectedSignalRaw.split("- ");
+            QStringList detectedSignal = detectedSignalRaw.split(" - ");
             std::string detected_class_name = detectedSignal[0].toStdString();
             double probability = detectedSignal[1].toDouble();
 
-            if (probability > 0.85) {
+            if (probability > SPEED_LIMIT_PRECISSION) {
                 std::cout << "Detected:" << detected_class_name << " | Prob: " << probability;
                 return detected_class_name;
             }
@@ -61,18 +61,6 @@ std::string YoloClassifier::classifySpeedLimitImage(const std::string &image_cla
 }
 
 std::string YoloClassifier::classifyImage(const std::string& image_class_name, const unsigned int tracking_id, cv::Mat detected_image) {
-
-    // Disabled for speed
-    /*if (image_class_name.compare("prohibitory") == 0) {
-        std::string detected_text = getDigits(detected_image);
-
-        // If detection succesfuull, clasify element
-        if (detected_text == "") {
-            std::cout << "Inserting... " << image_class_name;
-            classified_elements_.insert(std::pair<unsigned int, std::string>(tracking_id, image_class_name));
-            return  ("SL: " + detected_text);
-        }
-    }*/
     if (image_class_name == "prohibitory") {
         std::string detected_class_name = classifySpeedLimitImage(image_class_name, detected_image);
 
@@ -82,6 +70,9 @@ std::string YoloClassifier::classifyImage(const std::string& image_class_name, c
             }
             return detected_class_name;
         }
+    }
+    else if (tracking_id > 0) {
+        classified_elements_.insert(std::pair<unsigned int, std::string>(tracking_id, image_class_name));
     }
 
     return image_class_name;
@@ -105,7 +96,8 @@ std::string YoloClassifier::getModelImageFilePath(const std::string& image_class
 }
 
 bool YoloClassifier::hasElementBeenClassified(unsigned int tracking_id) {
-    return (tracking_id > 0) && (classified_elements_.count(tracking_id) != 0);
+    return (tracking_id > 0) && (classified_elements_.count(tracking_id) != 0) &&
+        (classified_elements_.at(tracking_id) != "prohibitory");
 }
 
 std::string YoloClassifier::getElementClassification(unsigned int tracking_id) {

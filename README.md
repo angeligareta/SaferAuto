@@ -31,12 +31,12 @@ Detect, locate and track road elements from a video stream using **[YOLOv3](http
 
 ## Key Features
 * Detection of speed limit road signs and speed identification. ✔️
-* Detection of traffic lights and classification depending on its state (green, amber, red). *[work in progress]*
-* Detection of cars and classification of the type. *[work in progress]*
+* Detection of traffic lights and classification depending on its state (green, amber, red). ✔️
 * Detect the previous elements in real-time. ✔️
-* Track the previous elements in real-time. *[work in progress]*
-* Implementation of a chatbot that notifies the driver of possible road threats and is able to repeat last notifications. *[work in progress]*
+* Track the previous elements in real-time. ✔️
 * UI that displays the current detection and tracking of the road elements, showing bounding boxes with the different classes. ✔️
+* Detection of cars and classification of the type. *[work in progress]*
+* Implementation of a chatbot that notifies the driver of possible road threats and is able to repeat last notifications. *[work in progress]*
 
 ## How to use
 <!--- Command line disabled for now.
@@ -101,7 +101,7 @@ You can see the interface windows here:
 </p>
 
 ## Bibliography
-Here I show some of the latest documentation I have found related with Advanced Driver Assistance Systems (ADAS).
+Here I show some of the latest documentation I have found related with Advanced Driver Assistance Systems (ADAS). You can find a more detailed version of the project in my [final degree project report](https://riull.ull.es/xmlui/handle/915/14512)(only in spanish).
 
 ### Papers
 * [Modular safe driving assistant](https://patentscope.wipo.int/search/docs2/pct/WO2018124987/pdf/K4bXp_8mgXtOiimgIsN83Emx_3SlgM63trIXmYiXShc3sc5bSGQpykJpqYXYsALG2x00ch9LZypLgGfTzTIj4oGFb6RtcRM_q04_bdU_f7yXE0CK5Hmkou_2h0Hq9FwU?docId=id00000043118723&psAuth=MeGp5WgtSXuL59RSkE9FUUGQxkHVGlDiqGcXTc0_28w)

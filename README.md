@@ -43,7 +43,7 @@ Detect, locate and track road elements from a video stream using **[YOLOv3](http
 There are two options of trying the traffic sign detector:
 ### Command-line program
 The first one is a command-line program that receives a video stream and plays the video while it indicates the bounding boxes of the different classes that the YOLO model detects.
-For running this program script you need to have [python3 installed](https://www.python.org/downloads/). Besides, you need to download the [weights file](https://drive.google.com/uc?export=download&confirm=Yp2w&id=1Ddvmwn9WcB__jocW70piDeWzyvGbqUP5) that represents the trained model. Finally, you only have to follow these steps:
+For running this program script you need to have [python3 installed](https://www.python.org/downloads/). Besides, you need to download the [weights file](https://drive.google.com/file/d/1_ivY2IhtxavGNVEZSNbJFnUrcZhAHAPG/view?usp=sharing) that represents the trained model. Finally, you only have to follow these steps:
 ```
 git clone https://github.com/angeligareta/SaferAuto.git
 mkdir -p models/weights/edb
@@ -64,8 +64,8 @@ The second way of testing the detector is a Graphical UI that shows the detectio
 - Nvidia GPU and correct driver.
 - CUDA and OPENCV. I have written a [tutorial](https://saferauto.home.blog/2019/04/06/4o-how-to-install-yolo-darknet-with-cuda-and-opencv-in-ubuntu/) about it. You would need to follow the steps **CUDA INSTALLATION**(Nvidia GPU required) and **Installing OPENCV**.
 - [QT Creator 5.12](https://www.qt.io/download). It is important to install this version.
-- [Weights file](https://drive.google.com/uc?export=download&confirm=Yp2w&id=12ZeXoDsPeNnk7X66LEtOBeDCYNbBbj4C) that represents the trained model.
-THe next step would be to set the weights file in the correct folder:
+- [Weights file](https://drive.google.com/file/d/1_ivY2IhtxavGNVEZSNbJFnUrcZhAHAPG/view?usp=sharing) that represents the trained model.
+The next step would be to set the weights file in the correct folder:
 ```
 cd SaferAuto/
 mkdir -p models/weights/
